@@ -742,26 +742,28 @@ ul { list-style: none; }
 }
 .service-card-visual {
   aspect-ratio: 4/3;
-  background: var(--gradient-primary);
   position: relative; overflow: hidden;
 }
 .service-card-visual img {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
+  position: absolute; inset: 0; z-index: 1;
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .service-card:hover .service-card-visual img {
   transform: scale(1.07);
 }
+.service-card-placeholder {
+  position: absolute; inset: 0; z-index: 0;
+}
 .service-card-visual::after {
   content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, transparent 50%, rgba(26,10,46,0.18) 100%);
-  z-index: 1;
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to bottom, transparent 50%, rgba(26,10,46,0.15) 100%);
   pointer-events: none;
 }
-.service-card-badge { z-index: 2; }
+.service-card-badge { z-index: 3; }
 .service-card-badge {
   position: absolute; top: 0.75rem; right: 0.75rem;
   background: white;
@@ -2482,8 +2484,7 @@ const FRESHA_URL = 'https://www.fresha.com/a/march-nails-ottawa-march-nails-700-
 
 // ── IMAGE PATHS ─────────────────────────────────────────────────
 // Place your AI images in an assets/ folder next to this HTML file.
-// Filenames must match exactly (see assets-README.md).
-// Until then, unique fallback photos load automatically.
+// Until then each service shows a unique gradient + icon.
 // ────────────────────────────────────────────────────────────────
 const services = [
   { id: 1,
@@ -2492,7 +2493,8 @@ const services = [
     desc: { en: 'Full acrylic refill with shellac color of your choice. Includes shaping and finishing.', fr: 'Remplissage acrylique complet avec couleur shellac. Comprend la mise en forme.' },
     price: 'CA$60', duration: { en: '1 hr', fr: '1h' },
     img: 'assets/acrylic-refill.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3997379/pexels-photo-3997379.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #FF2D78 0%, #FF6FA8 100%)',
+    icon: '💅',
     badge: { en: 'Popular', fr: 'Populaire' } },
 
   { id: 2,
@@ -2501,7 +2503,8 @@ const services = [
     desc: { en: 'Relaxing pedicure with shellac gel color. Includes foot soak, exfoliation and massage.', fr: 'Pédicure relaxant avec gel shellac. Comprend bain de pieds, exfoliation et massage.' },
     price: 'CA$55', duration: { en: '40 min', fr: '40 min' },
     img: 'assets/pedicure-shellac.jpg',
-    imgFallback: 'https://images.pexels.com/photos/4046316/pexels-photo-4046316.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #9B19F5 0%, #C77DFF 100%)',
+    icon: '🦶',
     badge: null },
 
   { id: 3,
@@ -2510,16 +2513,18 @@ const services = [
     desc: { en: 'Classic pedicure with regular polish. Foot care, cuticle work and color of choice.', fr: 'Pédicure classique avec vernis ordinaire. Soin des pieds, cuticules et couleur au choix.' },
     price: 'CA$43', duration: { en: '30 min', fr: '30 min' },
     img: 'assets/pedicure.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #E91E8C 0%, #FF6FA8 100%)',
+    icon: '✨',
     badge: null },
 
   { id: 4,
     name: { en: 'Manicure Shellac', fr: 'Manucure Shellac' },
     category: ['manicure', 'nails'],
-    desc: { en: 'Long-lasting shellac gel manicure. Includes cuticle care, shaping and 2–3 weeks of chip-free wear.', fr: 'Manucure shellac longue durée. Soins des cuticules, mise en forme, tenue 2–3 semaines.' },
+    desc: { en: 'Long-lasting shellac gel manicure. Includes cuticle care, shaping and 2-3 weeks of chip-free wear.', fr: 'Manucure shellac longue durée. Soins des cuticules, mise en forme, tenue 2-3 semaines.' },
     price: 'CA$35', duration: { en: '30 min', fr: '30 min' },
     img: 'assets/manicure-shellac.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3997382/pexels-photo-3997382.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #FF2D78 0%, #9B19F5 100%)',
+    icon: '💗',
     badge: { en: 'Best Value', fr: 'Meilleur rapport' } },
 
   { id: 5,
@@ -2528,7 +2533,8 @@ const services = [
     desc: { en: 'Full acrylic nail set with shellac color included. Sculpted for length and strength.', fr: 'Pose acrylique complète avec shellac inclus. Sculpté pour la longueur et la solidité.' },
     price: 'CA$75', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/acrylic-full-set.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3997384/pexels-photo-3997384.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #6D0AC7 0%, #E91E8C 100%)',
+    icon: '💎',
     badge: { en: 'Premium', fr: 'Premium' } },
 
   { id: 6,
@@ -2537,7 +2543,8 @@ const services = [
     desc: { en: 'Soft gel tip extensions for a natural flex and look. No damage to natural nails.', fr: 'Extensions en pointe gel douce pour un aspect naturel. Sans dommage pour les ongles naturels.' },
     price: 'CA$80', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/gel-x-extensions.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3997390/pexels-photo-3997390.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF2D78 100%)',
+    icon: '🌸',
     badge: { en: 'Trending', fr: 'Tendance' } },
 
   { id: 7,
@@ -2546,7 +2553,8 @@ const services = [
     desc: { en: 'Durable dip powder manicure. Long-lasting color without UV light, up to 4 weeks.', fr: "Manucure dip robuste. Couleur longue durée sans UV, jusqu'à 4 semaines." },
     price: 'CA$50', duration: { en: '45 min', fr: '45 min' },
     img: 'assets/dip-powder.jpg',
-    imgFallback: 'https://images.pexels.com/photos/3997393/pexels-photo-3997393.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #C77DFF 0%, #FF2D78 100%)',
+    icon: '🎨',
     badge: null },
 
   { id: 8,
@@ -2555,7 +2563,8 @@ const services = [
     desc: { en: 'Classic or volume lash extensions for a stunning, wide-eyed look that lasts weeks.', fr: 'Extensions de cils classiques ou volume pour un regard époustouflant qui dure des semaines.' },
     price: 'CA$89', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/lash-extensions.jpg',
-    imgFallback: 'https://images.pexels.com/photos/2434168/pexels-photo-2434168.jpeg?auto=compress&cs=tinysrgb&w=600',
+    gradient: 'linear-gradient(135deg, #1A0A2E 0%, #9B19F5 100%)',
+    icon: '👁️',
     badge: { en: 'Promo', fr: 'Promo' } },
 ];
 const galleryImages = [
@@ -2673,13 +2682,17 @@ function renderServices(filter = 'all') {
   const filtered = filter === 'all' ? services : services.filter(s => s.category.includes(filter));
   grid.innerHTML = filtered.map((s, i) => `
     <article class="service-card reveal reveal-delay-${(i % 4) + 1}" role="article">
-      <div class="service-card-visual" aria-hidden="true">
+      <div class="service-card-visual" aria-hidden="true" style="background:${s.gradient};">
         <img
           src="${s.img}"
           alt="${s.name.en}"
           loading="lazy"
-          onerror="this.src='${s.imgFallback}'"
+          style="width:100%;height:100%;object-fit:cover;display:block;"
+          onerror="this.style.display='none'"
         >
+        <div class="service-card-placeholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;">
+          <span style="font-size:3.5rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));">${s.icon}</span>
+        </div>
         ${s.badge ? `<div class="service-card-badge">${s.badge[currentLang]}</div>` : ''}
       </div>
       <div class="service-card-body">
