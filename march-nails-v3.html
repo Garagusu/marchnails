@@ -2682,18 +2682,20 @@ function renderServices(filter = 'all') {
   const filtered = filter === 'all' ? services : services.filter(s => s.category.includes(filter));
   grid.innerHTML = filtered.map((s, i) => `
     <article class="service-card reveal reveal-delay-${(i % 4) + 1}" role="article">
-      <div class="service-card-visual" aria-hidden="true" style="background:${s.gradient};">
+      <div class="service-card-visual" style="background:${s.gradient};" aria-hidden="true">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <div style="text-align:center;">
+            <div style="font-size:4rem;line-height:1;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.25));">${s.icon}</div>
+          </div>
+        </div>
         <img
           src="${s.img}"
           alt="${s.name.en}"
           loading="lazy"
-          style="width:100%;height:100%;object-fit:cover;display:block;"
-          onerror="this.style.display='none'"
+          style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"
+          onerror="this.remove()"
         >
-        <div class="service-card-placeholder" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;">
-          <span style="font-size:3.5rem;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));">${s.icon}</span>
-        </div>
-        ${s.badge ? `<div class="service-card-badge">${s.badge[currentLang]}</div>` : ''}
+        ${s.badge ? `<div class="service-card-badge" style="z-index:2;">${s.badge[currentLang]}</div>` : ''}
       </div>
       <div class="service-card-body">
         <h3 class="service-card-name">${s.name[currentLang]}</h3>
@@ -2708,8 +2710,7 @@ function renderServices(filter = 'all') {
           <a href="#booking"
              class="service-book-btn"
              aria-label="Book ${s.name[currentLang]}"
-             onclick="preselectService(${s.id})"
-             data-en="Book Now" data-fr="Réserver">
+             onclick="preselectService(${s.id})">
             ${currentLang === 'fr' ? 'Réserver' : 'Book Now'}
           </a>
         </div>
@@ -2839,13 +2840,25 @@ function renderFAQ() {
 
 // ===== FAQ INTERACTION =====
 function initFAQ() {
-  document.querySelectorAll('.faq-question').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const item = this.closest('.faq-item');
-      const wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-question').setAttribute('aria-expanded', 'false'); });
-      if (!wasOpen) { item.classList.add('open'); this.setAttribute('aria-expanded', 'true'); }
+  // Use event delegation on the container - works after dynamic re-render
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+  // Remove old listener if any
+  list.replaceWith(list.cloneNode(true));
+  const freshList = document.getElementById('faq-list');
+  freshList.addEventListener('click', function(e) {
+    const btn = e.target.closest('.faq-question');
+    if (!btn) return;
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    freshList.querySelectorAll('.faq-item').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
     });
+    if (!wasOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
   });
 }
 
