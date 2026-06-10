@@ -2480,69 +2480,84 @@ footer::before { background: var(--gradient-primary); }
 // ===== DATA =====
 const FRESHA_URL = 'https://www.fresha.com/a/march-nails-ottawa-march-nails-700-march-road-nqadselt';
 
-// ── IMAGE PATHS ──────────────────────────────────────────────────
-// To use your own AI-generated images, place them in an assets/ folder
-// next to this HTML file and update the paths below, e.g.:
-//   img: 'assets/acrylic-refill.jpg'
+// ── IMAGE PATHS ─────────────────────────────────────────────────
+// Place your AI images in an assets/ folder next to this HTML file.
+// Filenames must match exactly (see assets-README.md).
+// Until then, unique fallback photos load automatically.
 // ────────────────────────────────────────────────────────────────
 const services = [
-  { id: 1, name: { en: 'Acrylic Refill', fr: 'Remplissage Acrylique' }, category: ['nails', 'extensions'],
+  { id: 1,
+    name: { en: 'Acrylic Refill', fr: 'Remplissage Acrylique' },
+    category: ['nails', 'extensions'],
     desc: { en: 'Full acrylic refill with shellac color of your choice. Includes shaping and finishing.', fr: 'Remplissage acrylique complet avec couleur shellac. Comprend la mise en forme.' },
     price: 'CA$60', duration: { en: '1 hr', fr: '1h' },
     img: 'assets/acrylic-refill.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3997379/pexels-photo-3997379.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: { en: 'Popular', fr: 'Populaire' } },
 
-  { id: 2, name: { en: 'Pedicure Shellac', fr: 'Pédicure Shellac' }, category: ['pedicure'],
+  { id: 2,
+    name: { en: 'Pedicure Shellac', fr: 'Pédicure Shellac' },
+    category: ['pedicure'],
     desc: { en: 'Relaxing pedicure with shellac gel color. Includes foot soak, exfoliation and massage.', fr: 'Pédicure relaxant avec gel shellac. Comprend bain de pieds, exfoliation et massage.' },
     price: 'CA$55', duration: { en: '40 min', fr: '40 min' },
     img: 'assets/pedicure-shellac.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/4046316/pexels-photo-4046316.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: null },
 
-  { id: 3, name: { en: 'Pedicure', fr: 'Pédicure' }, category: ['pedicure'],
+  { id: 3,
+    name: { en: 'Pedicure', fr: 'Pédicure' },
+    category: ['pedicure'],
     desc: { en: 'Classic pedicure with regular polish. Foot care, cuticle work and color of choice.', fr: 'Pédicure classique avec vernis ordinaire. Soin des pieds, cuticules et couleur au choix.' },
     price: 'CA$43', duration: { en: '30 min', fr: '30 min' },
     img: 'assets/pedicure.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: null },
 
-  { id: 4, name: { en: 'Manicure Shellac', fr: 'Manucure Shellac' }, category: ['manicure', 'nails'],
+  { id: 4,
+    name: { en: 'Manicure Shellac', fr: 'Manucure Shellac' },
+    category: ['manicure', 'nails'],
     desc: { en: 'Long-lasting shellac gel manicure. Includes cuticle care, shaping and 2–3 weeks of chip-free wear.', fr: 'Manucure shellac longue durée. Soins des cuticules, mise en forme, tenue 2–3 semaines.' },
     price: 'CA$35', duration: { en: '30 min', fr: '30 min' },
     img: 'assets/manicure-shellac.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3997382/pexels-photo-3997382.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: { en: 'Best Value', fr: 'Meilleur rapport' } },
 
-  { id: 5, name: { en: 'Acrylic Full Set', fr: 'Pose acrylique complète' }, category: ['nails', 'extensions'],
+  { id: 5,
+    name: { en: 'Acrylic Full Set', fr: 'Pose acrylique complète' },
+    category: ['nails', 'extensions'],
     desc: { en: 'Full acrylic nail set with shellac color included. Sculpted for length and strength.', fr: 'Pose acrylique complète avec shellac inclus. Sculpté pour la longueur et la solidité.' },
     price: 'CA$75', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/acrylic-full-set.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3997384/pexels-photo-3997384.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: { en: 'Premium', fr: 'Premium' } },
 
-  { id: 6, name: { en: 'Gel-X Extensions', fr: 'Extensions Gel-X' }, category: ['extensions', 'nails'],
+  { id: 6,
+    name: { en: 'Gel-X Extensions', fr: 'Extensions Gel-X' },
+    category: ['extensions', 'nails'],
     desc: { en: 'Soft gel tip extensions for a natural flex and look. No damage to natural nails.', fr: 'Extensions en pointe gel douce pour un aspect naturel. Sans dommage pour les ongles naturels.' },
     price: 'CA$80', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/gel-x-extensions.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3997390/pexels-photo-3997390.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: { en: 'Trending', fr: 'Tendance' } },
 
-  { id: 7, name: { en: 'Dip Powder Manicure', fr: 'Manucure poudre dip' }, category: ['manicure', 'nails'],
-    desc: { en: 'Durable dip powder manicure. Long-lasting color without UV light, up to 4 weeks.', fr: 'Manucure dip robuste. Couleur longue durée sans UV, jusqu\'à 4 semaines.' },
+  { id: 7,
+    name: { en: 'Dip Powder Manicure', fr: 'Manucure poudre dip' },
+    category: ['manicure', 'nails'],
+    desc: { en: 'Durable dip powder manicure. Long-lasting color without UV light, up to 4 weeks.', fr: "Manucure dip robuste. Couleur longue durée sans UV, jusqu'à 4 semaines." },
     price: 'CA$50', duration: { en: '45 min', fr: '45 min' },
     img: 'assets/dip-powder.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/3997393/pexels-photo-3997393.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: null },
 
-  { id: 8, name: { en: 'Lash Extensions', fr: 'Extensions de cils' }, category: [],
+  { id: 8,
+    name: { en: 'Lash Extensions', fr: 'Extensions de cils' },
+    category: [],
     desc: { en: 'Classic or volume lash extensions for a stunning, wide-eyed look that lasts weeks.', fr: 'Extensions de cils classiques ou volume pour un regard époustouflant qui dure des semaines.' },
     price: 'CA$89', duration: { en: '1.5 hr', fr: '1h30' },
     img: 'assets/lash-extensions.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1512207736890-6ffed8a84e8d?w=600&q=80',
+    imgFallback: 'https://images.pexels.com/photos/2434168/pexels-photo-2434168.jpeg?auto=compress&cs=tinysrgb&w=600',
     badge: { en: 'Promo', fr: 'Promo' } },
 ];
-
 const galleryImages = [
   { src: 'https://images.fresha.com/locations/location-profile-images/1219608/1624817/01cc5118-55e4-4278-8b55-663d151faead-MarchNails-CA-Ontario-Ottawa-Kanata-Fresha.jpg?class=venue-gallery-large&f_width=800', alt: 'March Nails salon' },
   { src: 'https://images.fresha.com/locations/location-profile-images/1219608/1624818/07e4b4a8-156b-462c-8082-4ea8e4b122b8-MarchNails-CA-Ontario-Ottawa-Kanata-Fresha.jpg?class=venue-gallery-large&f_width=800', alt: 'Nail services' },
@@ -2555,21 +2570,20 @@ const galleryImages = [
 const showcaseItems = [
   { name: { en: 'Chrome Nails', fr: 'Ongles chromés' }, tag: { en: 'Mirror Finish', fr: 'Finition miroir' },
     img: 'assets/showcase-chrome.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
+    imgFallback: 'https://images.pexels.com/photos/3997379/pexels-photo-3997379.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { name: { en: 'French Tips', fr: 'Bout français' }, tag: { en: 'Timeless Classic', fr: 'Classique intemporel' },
     img: 'assets/showcase-french.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
+    imgFallback: 'https://images.pexels.com/photos/3997382/pexels-photo-3997382.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { name: { en: 'Ombre Nails', fr: 'Ongles ombré' }, tag: { en: 'Gradient Art', fr: 'Art dégradé' },
     img: 'assets/showcase-ombre.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
+    imgFallback: 'https://images.pexels.com/photos/4046316/pexels-photo-4046316.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { name: { en: 'Gel-X', fr: 'Gel-X' }, tag: { en: 'Natural Look', fr: 'Look naturel' },
     img: 'assets/showcase-gelx.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
+    imgFallback: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { name: { en: 'Acrylic Art', fr: 'Art acrylique' }, tag: { en: 'Custom Design', fr: 'Design personnalisé' },
     img: 'assets/showcase-acrylic-art.jpg',
-    imgFallback: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80' },
+    imgFallback: 'https://images.pexels.com/photos/2434168/pexels-photo-2434168.jpeg?auto=compress&cs=tinysrgb&w=800' },
 ];
-
 const reviews = [
   { name: 'Aruni W', date: 'Today', stars: 5, text: { en: 'Flower does fantastic work! Always leaves my nails looking perfect. The salon is clean, professional and so welcoming.', fr: 'Flower fait un travail fantastique ! Mes ongles sont toujours parfaits. Le salon est propre et accueillant.' }, avatar: 'https://cdn-gatekeeper-uploads.fresha.com/avatars/46796469/medium/unnamed.png?v=63918433492', initials: 'AW' },
   { name: 'Deborah H', date: 'Jun 7, 2026', stars: 5, text: { en: 'Excellent job! I love coming here — always a fantastic experience. The team is so talented and the atmosphere is wonderful.', fr: 'Excellent travail ! J\'adore venir ici — toujours une expérience fantastique. L\'équipe est talentueuse.' }, avatar: null, initials: 'DH' },
