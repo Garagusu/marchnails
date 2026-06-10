@@ -658,21 +658,54 @@ tr:hover td { background: rgba(255,45,120,0.04); }
   cursor: pointer; box-shadow: var(--shadow);
 }
 @media (max-width: 900px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
+  .sidebar { transform: translateX(-100%); box-shadow: none; }
+  .sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
   .main { margin-left: 0; }
   .sidebar-toggle { display: flex; }
   .topbar { padding-left: 4rem; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .settings-grid { grid-template-columns: 1fr; }
   .cal-cell { min-height: 60px; }
+  .page { padding: 1.5rem; }
+  .topbar-search { width: 160px; }
+  .topbar-search:focus { width: 200px; }
 }
 @media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .stat-card { padding: 1.1rem; }
+  .stat-num { font-size: 1.75rem; }
+  .table-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .table-filters { gap: 0.35rem; }
+  .filter-btn { padding: 0.35rem 0.7rem; font-size: 0.68rem; }
+  table { font-size: 0.78rem; }
+  th, td { padding: 0.65rem 0.5rem; }
+  .action-btns { flex-wrap: wrap; gap: 0.3rem; }
+  .action-btn { font-size: 0.68rem; padding: 0.3rem 0.55rem; }
+  .client-name { font-size: 0.82rem; }
+  .client-contact { font-size: 0.68rem; }
+  .client-initials { width: 28px; height: 28px; font-size: 0.68rem; }
+  .page { padding: 1rem; }
+  .topbar { padding: 0.875rem 1rem 0.875rem 3.5rem; }
+  .topbar-title { font-size: 1rem; }
+  .topbar-search { display: none; }
+  .page-heading h1 { font-size: 1.4rem; }
+  .cal-cell { min-height: 48px; padding: 0.3rem; }
+  .cal-event { font-size: 0.58rem; padding: 0.1rem 0.3rem; }
+  .cal-date { font-size: 0.72rem; }
+  .cal-day-label { font-size: 0.6rem; padding: 0.4rem; }
+  .modal { padding: 1.5rem 1.25rem; }
+  .modal-title { font-size: 1.25rem; }
+  .modal-actions { gap: 0.4rem; }
+  .modal-actions .action-btn { padding: 0.55rem 0.9rem; }
+  .settings-card { padding: 1.25rem; }
+  .login-card { padding: 2rem 1.5rem; }
+  /* Hide less important table columns on mobile */
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4) { display: none; }
+}
+@media (max-width: 400px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .table-header { flex-direction: column; align-items: flex-start; }
-  table { font-size: 0.8rem; }
-  th, td { padding: 0.7rem 0.6rem; }
-  .action-btns { flex-wrap: wrap; }
+  th:nth-child(5), td:nth-child(5) { display: none; }
 }
 
 /* Page section heading */
