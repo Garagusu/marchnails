@@ -147,11 +147,11 @@ ul { list-style: none; }
 /* ===== LOADING SCREEN ===== */
 #loading-screen {
   position: fixed; inset: 0; z-index: 9999;
-  background: #1A0A2E;
+  background: var(--charcoal);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
 }
-#loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#loading-screen.hidden { opacity: 0; visibility: hidden; }
 .loader-logo {
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 3.5rem);
@@ -2608,16 +2608,10 @@ let lightboxIndex = 0;
 let activeFilter = 'all';
 
 // ===== INIT =====
-function hideLoader() {
-  const ls = document.getElementById('loading-screen');
-  if (ls) ls.classList.add('hidden');
-}
-// Hide as fast as possible — max 1.2s wait, fires on whichever is first
-window.addEventListener('load', hideLoader);
-setTimeout(hideLoader, 1200);
-
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(hideLoader, 800);
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 2200);
   initParticles();
   renderServices();
   renderGallery();
