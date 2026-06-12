@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebCraft Agency — Sales Configurator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0F;--surface:#13131A;--surface2:#1C1C27;--surface3:#252535;
+  --border:#2A2A3D;--border2:#383850;
+  --pink:#E85D8A;--pink-light:#F0A0BC;--pink-dark:#B03060;
+  --violet:#7C3AED;--violet-light:#A78BFA;
+  --gold:#F59E0B;--green:#10B981;--green-bg:rgba(16,185,129,0.1);--green-border:rgba(16,185,129,0.3);
+  --text:#F0EEF8;--text2:#A09AB8;--text3:#605878;
+  --font:'Inter',sans-serif;--font-d:'Playfair Display',serif;
+  --radius:12px;--radius-sm:8px;--tr:all 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+html{font-size:15px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:300px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sb-hdr{padding:1.25rem 1.1rem 0.9rem;border-bottom:1px solid var(--border)}
+.sb-logo{font-family:var(--font-d);font-size:1.2rem;color:var(--text)}
+.sb-logo span{color:var(--pink)}
+.sb-tag{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-top:1px}
+.sb-section{padding:0.85rem 1.1rem;border-bottom:1px solid var(--border)}
+.sb-section-lbl{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:0.6rem}
+.sb-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem 0.7rem;font-size:0.8rem;color:var(--text);font-family:var(--font);margin-bottom:0.4rem;transition:var(--tr)}
+.sb-input:focus{outline:none;border-color:var(--pink);background:rgba(232,93,138,0.05)}
+.sb-input::placeholder{color:var(--text3)}
+.sb-price-big{font-family:var(--font-d);font-size:2.2rem;color:var(--text);line-height:1;margin-bottom:0.15rem}
+.sb-price-sub{font-size:0.68rem;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.75rem}
+.sb-break{display:flex;flex-direction:column;gap:0.28rem}
+.sb-row{display:flex;justify-content:space-between;font-size:0.76rem}
+.sb-row .l{color:var(--text2)}.sb-row .v{color:var(--text);font-weight:500}
+.sb-row.tot{border-top:1px solid var(--border);padding-top:0.4rem;margin-top:0.15rem}
+.sb-row.tot .l{color:var(--text);font-weight:600}
+.sb-row.tot .v{color:var(--pink);font-weight:700}
+.sb-row.mo .v{color:var(--green)}
+.sb-dep{margin-top:0.55rem;background:rgba(232,93,138,0.08);border:1px solid rgba(232,93,138,0.18);border-radius:6px;padding:0.45rem 0.7rem;font-size:0.72rem;color:var(--pink-light)}
+.sb-nav{display:flex;gap:0.3rem;flex-wrap:wrap;padding:0.6rem 1.1rem;border-bottom:1px solid var(--border)}
+.sb-nb{padding:0.28rem 0.65rem;border-radius:50px;font-size:0.7rem;font-weight:500;cursor:pointer;transition:var(--tr);border:1px solid var(--border2);background:transparent;color:var(--text2)}
+.sb-nb.active{background:var(--pink);border-color:var(--pink);color:white}
+.sb-nb:hover:not(.active){border-color:var(--pink);color:var(--pink)}
+.sb-ctas{padding:0.85rem 1.1rem;margin-top:auto;display:flex;flex-direction:column;gap:0.4rem}
+.btn-p{background:linear-gradient(135deg,var(--pink),var(--violet));color:white;padding:0.75rem;border-radius:var(--radius);font-size:0.8rem;font-weight:600;letter-spacing:0.04em;transition:var(--tr);border:none;cursor:pointer}
+.btn-p:hover{opacity:0.88;transform:translateY(-1px)}
+.btn-o{background:transparent;color:var(--text2);padding:0.65rem;border-radius:var(--radius);font-size:0.78rem;border:1px solid var(--border2);transition:var(--tr);cursor:pointer}
+.btn-o:hover{border-color:var(--pink);color:var(--pink)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:1.75rem}
+.pg-title{font-size:1.4rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;font-family:var(--font-d)}
+.pg-sub{font-size:0.82rem;color:var(--text2);margin-bottom:1.35rem;line-height:1.6}
+.live-badge{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.7rem;color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:50px;padding:0.22rem 0.65rem;margin-bottom:0.85rem}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* Packages */
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.85rem;margin-bottom:1.75rem}
+.pkg-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.1rem;cursor:pointer;transition:var(--tr);position:relative}
+.pkg-card:hover{border-color:var(--border2)}
+.pkg-card.sel{border-color:var(--pink);background:rgba(232,93,138,0.05)}
+.pkg-chk{display:none;position:absolute;top:0.6rem;right:0.6rem;width:20px;height:20px;border-radius:50%;background:var(--pink);align-items:center;justify-content:center;font-size:0.65rem;color:white}
+.pkg-card.sel .pkg-chk{display:flex}
+.pkg-bdg{display:inline-block;font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.18rem 0.55rem;border-radius:50px;margin-bottom:0.5rem}
+.bdg-pop{background:rgba(232,93,138,0.15);color:var(--pink)}
+.bdg-best{background:rgba(245,158,11,0.15);color:var(--gold)}
+.bdg-start{background:var(--surface3);color:var(--text3)}
+.pkg-name{font-size:1rem;font-weight:600;margin-bottom:0.2rem;font-family:var(--font-d)}
+.pkg-price{font-size:1.35rem;font-weight:700;color:var(--pink);margin-bottom:0.5rem}
+.pkg-price sub{font-size:0.7rem;font-weight:400;color:var(--text2)}
+.pkg-desc{font-size:0.75rem;color:var(--text2);line-height:1.45}
+
+/* Feature sections */
+.fsec{margin-bottom:1.35rem}
+.fsec-hdr{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.75rem;padding-bottom:0.55rem;border-bottom:1px solid var(--border)}
+.fsec-ico{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
+.fsec-ttl{font-size:0.82rem;font-weight:600;color:var(--text)}
+.fsec-cnt{margin-left:auto;font-size:0.68rem;color:var(--text3);background:var(--surface2);padding:0.12rem 0.45rem;border-radius:50px}
+.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.55rem}
+.fgrid.g3{grid-template-columns:repeat(3,1fr)}
+
+/* Feature items */
+.fi{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:0.8rem;cursor:pointer;transition:var(--tr);display:flex;gap:0.65rem;align-items:flex-start;user-select:none}
+.fi:hover{border-color:var(--border2)}
+.fi.on{border-color:var(--pink);background:rgba(232,93,138,0.055)}
+.fi.inc{border-color:var(--green-border);background:var(--green-bg);cursor:default}
+.fi.locked{opacity:0.35;cursor:not-allowed}
+.ftog{flex-shrink:0;width:34px;height:19px;border-radius:50px;border:1.5px solid var(--border2);background:var(--surface2);position:relative;transition:var(--tr);margin-top:1px}
+.ftog::after{content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--text3);transition:var(--tr)}
+.fi.on .ftog{background:var(--pink);border-color:var(--pink)}
+.fi.on .ftog::after{background:white;left:17px}
+.fi.inc .ftog{background:var(--green);border-color:var(--green)}
+.fi.inc .ftog::after{background:white;left:17px}
+.fb{flex:1;min-width:0}
+.fn{font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:0.12rem;display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap}
+.fd{font-size:0.72rem;color:var(--text2);line-height:1.38}
+.fpt{font-size:0.65rem;font-weight:600;color:var(--pink-light);background:rgba(232,93,138,0.12);padding:0.08rem 0.38rem;border-radius:50px;white-space:nowrap}
+.fpt.free{color:var(--green);background:var(--green-bg)}
+.fbdg{font-size:0.6rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.08rem 0.38rem;border-radius:50px}
+.fn-new{background:rgba(124,58,237,0.2);color:var(--violet-light)}
+.fn-hot{background:rgba(232,93,138,0.15);color:var(--pink-light)}
+.fn-rec{background:rgba(245,158,11,0.15);color:var(--gold)}
+
+/* Hours */
+.hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.45rem;margin-bottom:0.85rem}
+.hday{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.45rem 0.25rem;text-align:center;cursor:pointer;transition:var(--tr)}
+.hday.on{border-color:var(--pink);background:rgba(232,93,138,0.07)}
+.hday-name{font-size:0.62rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text2);margin-bottom:0.3rem}
+.hday.on .hday-name{color:var(--pink)}
+.hday-status{font-size:0.62rem;color:var(--text3);margin-bottom:0.3rem;font-weight:500}
+.hday.on .hday-status{color:var(--green)}
+.hinput{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.22rem 0.2rem;font-size:0.62rem;color:var(--text);text-align:center;font-family:var(--font);display:block;margin-bottom:2px}
+.hinput:focus{outline:none;border-color:var(--pink)}
+
+/* Colors */
+.cdots{display:flex;gap:0.45rem;flex-wrap:wrap;margin-bottom:0.65rem}
+.cdot{width:26px;height:26px;border-radius:50%;cursor:pointer;transition:var(--tr);border:2px solid transparent}
+.cdot.active{border-color:white;transform:scale(1.18)}
+.custom-c{display:flex;align-items:center;gap:0.5rem;margin-top:0.4rem}
+.custom-c input[type=color]{width:30px;height:30px;border:none;background:none;cursor:pointer;padding:0;border-radius:50%}
+.custom-c input[type=text]{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.32rem 0.55rem;font-size:0.76rem;color:var(--text);font-family:var(--font);width:88px}
+.custom-c input[type=text]:focus{outline:none;border-color:var(--pink)}
+
+/* Quote */
+.qbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.35rem;margin-top:0.5rem}
+.q-title{font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:0.9rem}
+.qrow{display:flex;justify-content:space-between;align-items:flex-start;padding:0.42rem 0;border-bottom:1px solid var(--border);font-size:0.8rem}
+.qrow:last-child{border-bottom:none}
+.qrow.shdr .ql{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);padding-top:0.6rem}
+.ql{color:var(--text2)}.qv{color:var(--text);font-weight:500}
+.qv.free{color:var(--green)}.qv.inc{color:var(--text3);font-style:italic}
+.qtot{margin-top:0.9rem;padding:0.9rem 1rem;background:linear-gradient(135deg,rgba(232,93,138,0.1),rgba(124,58,237,0.1));border:1px solid rgba(232,93,138,0.18);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center}
+.qtot-l{font-size:0.75rem;color:var(--text2)}.qtot-mo{font-size:0.72rem;color:var(--green);margin-top:0.12rem}
+.qtot-p{font-family:var(--font-d);font-size:1.65rem;color:var(--pink);font-weight:600}
+
+/* Proposal modal */
+.modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;padding:1.5rem}
+.modal.open{display:flex}
+.modal-wrap{background:white;color:#111;border-radius:var(--radius);max-width:660px;width:100%;max-height:92vh;overflow-y:auto;padding:2.5rem;position:relative}
+.modal-close{position:sticky;top:0;float:right;background:#f0f0f0;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;color:#666;margin-bottom:0.5rem}
+.p-logo{font-size:1.25rem;font-weight:700;font-family:var(--font-d);color:#1a0a2e}
+.p-logo span{color:#E85D8A}
+.p-client{font-size:0.78rem;color:#888;margin-bottom:1.75rem;margin-top:0.15rem}
+.p-h1{font-size:1.6rem;font-weight:700;font-family:var(--font-d);color:#1a0a2e;margin-bottom:0.4rem}
+.p-sub{font-size:0.85rem;color:#666;margin-bottom:1.75rem;line-height:1.65}
+.p-sec{margin-bottom:1.25rem}
+.p-sec-lbl{font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#aaa;margin-bottom:0.65rem}
+.p-item{display:flex;justify-content:space-between;align-items:flex-start;padding:0.45rem 0;border-bottom:1px solid #f5f5f5;font-size:0.85rem}
+.p-item:last-child{border-bottom:none}
+.p-item .pn{color:#333}.p-item .pn small{font-size:0.72rem;color:#999;display:block;margin-top:1px}
+.p-item .pv{font-weight:600;color:#1a0a2e;white-space:nowrap;margin-left:1rem}
+.p-item .pv.free{color:#10B981}.p-item .pv.inc{color:#bbb;font-style:italic;font-weight:400}
+.p-totbox{background:#FBF0F5;border:1px solid #F0C0D0;border-radius:8px;padding:1.1rem 1.25rem;margin-top:0.85rem;display:flex;justify-content:space-between;align-items:center}
+.p-tot-l{font-size:0.82rem;color:#888}.p-tot-mo{font-size:0.75rem;color:#10B981;margin-top:0.15rem}
+.p-tot-p{font-family:var(--font-d);font-size:1.9rem;color:#E85D8A;font-weight:700}
+.p-terms{font-size:0.72rem;color:#aaa;margin-top:1.25rem;line-height:1.7;border-top:1px solid #f0f0f0;padding-top:0.9rem}
+@media print{
+  .modal{display:flex!important;position:static;background:white;padding:0}
+  .modal-close,.sidebar,.main{display:none!important}
+  .modal-wrap{box-shadow:none;max-height:none;padding:1.5rem}
+}
+@media(max-width:860px){.sidebar{width:260px}.pkg-grid{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}.fgrid.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.app{flex-direction:column;height:auto}.sidebar{width:100%}.main{padding:1.1rem}.hgrid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="modal" id="modal">
+  <div class="modal-wrap">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="proposal-html"></div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-hdr">
+      <div class="sb-logo">Web<span>Craft</span></div>
+      <div class="sb-tag">Live Sales Configurator</div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-lbl">Client Info</div>
+      <input class="sb-input" id="c-name" placeholder="Salon / Client name">
+      <input class="sb-input" id="c-email" placeholder="Email address">
+      <input class="sb-input" id="c-phone" placeholder="Phone number">
+    </div>
+
+    <div class="sb-nav">
+      <button class="sb-nb active" onclick="gv('features',this)">Features</button>
+      <button class="sb-nb" onclick="gv('hours',this)">Hours</button>
+      <button class="sb-nb" onclick="gv('brand',this)">Brand</button>
+      <button class="sb-nb" onclick="gv('quote',this)">Quote</button>
+    </div>
+
+    <div class="sb-section" style="flex:1;overflow-y:auto">
+      <div class="sb-section-lbl">Live Price</div>
+      <div class="sb-price-big" id="sb-total">CA$1,899</div>
+      <div class="sb-price-sub">one-time investment</div>
+      <div class="sb-break" id="sb-break"></div>
+      <div class="sb-dep" id="sb-dep">50% deposit to start: <strong id="sb-dep-amt"></strong></div>
+    </div>
+
+    <div class="sb-ctas">
+      <button class="btn-p" onclick="openProposal()">✦ Generate Proposal</button>
+      <button class="btn-o" onclick="printIt()">⬇ Export PDF</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- FEATURES -->
+    <div id="v-features">
+      <div class="live-badge"><span class="pulse"></span>Price updates live as you toggle</div>
+      <h1 class="pg-title">Configure the Website</h1>
+      <p class="pg-sub">Select base package, then toggle any feature on or off. Everything reflects in the quote instantly.</p>
+      <div class="pkg-grid" id="pkg-grid"></div>
+      <div id="feat-wrap"></div>
+    </div>
+
+    <!-- HOURS -->
+    <div id="v-hours" style="display:none">
+      <h1 class="pg-title">Business Hours</h1>
+      <p class="pg-sub">Set the salon's weekly schedule. Embedded in the website contact section and Google Rich Results (Schema.org).</p>
+      <div class="hgrid" id="hgrid"></div>
+      <div style="font-size:0.76rem;color:var(--text2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.7rem 0.9rem;line-height:1.6">
+        💡 Click a day to toggle open / closed. Times are written directly into the website code.
+      </div>
+    </div>
+
+    <!-- BRAND -->
+    <div id="v-brand" style="display:none">
+      <h1 class="pg-title">Brand & Style</h1>
+      <p class="pg-sub">Color palette, typography, and design mood. Applied across the entire website at build time.</p>
+      <div class="fsec">
+        <div class="fsec-hdr"><div class="fsec-ico" style="background:rgba(232,93,138,0.15)">🎨</div><div class="fsec-ttl">Primary Color Palette</div></div>
+        <div class="cdots" id="cdots"></div>
+        <div class="custom-c">
+          <input type="color" id="cpick" value="#E85D8A" oninput="setCustom(this.value)">
+          <input type="text" id="chex" value="#E85D8A" placeholder="#E85D8A" oninput="setCustom(this.value)">
+          <span style="font-size:0.73rem;color:var(--text2)">Custom hex</span>
+        </div>
+      </div>
+      <div class="fsec">
+        <div class="fsec-hdr"><div class="fsec-ico" style="background:rgba(124,58,237,0.15)">🔤</div><div class="fsec-ttl">Typography Style</div></div>
+        <div class="fgrid" id="tgrid"></div>
+      </div>
+      <div class="fsec">
+        <div class="fsec-hdr"><div class="fsec-ico" style="background:rgba(245,158,11,0.15)">✨</div><div class="fsec-ttl">Design Mood</div></div>
+        <div class="fgrid" id="mgrid"></div>
+      </div>
+    </div>
+
+    <!-- QUOTE -->
+    <div id="v-quote" style="display:none">
+      <h1 class="pg-title">Quote Summary</h1>
+      <p class="pg-sub">Full breakdown of everything selected. Share this with the client or export as PDF.</p>
+      <div class="qbox" id="qbox"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────
+const PKGS = [
+  { id:'starter', name:'Starter', price:1299, badge:'Starter', bc:'bdg-start',
+    desc:'Clean professional site, SEO, contact form, no booking.',
+    inc:['hero','contact','faq','seo_basic','mobile','emailjs_c','whatsapp'] },
+  { id:'pro', name:'Professional', price:1899, badge:'Most Popular', bc:'bdg-pop',
+    desc:'Full site + booking system + admin panel + bilingual.',
+    inc:['hero','services','gallery','team','reviews','contact','faq','booking','admin','bilingual','seo_adv','mobile','emailjs_bk','dark_mode','whatsapp'] },
+  { id:'premium', name:'Premium', price:2999, badge:'Best Value', bc:'bdg-best',
+    desc:'Everything in Pro + cloud DB + domain + 1 month support.',
+    inc:['hero','services','gallery','team','reviews','contact','faq','booking','admin','bilingual','seo_adv','mobile','emailjs_bk','dark_mode','supabase','domain','analytics','training','priority','whatsapp'] },
+];
+
+const SECS = [
+  { id:'pages', title:'Page Sections', icon:'📄', bg:'rgba(124,58,237,0.12)', items:[
+    { id:'hero',     n:'Hero Section',       d:'Full-screen banner with CTA', price:0,   always:true },
+    { id:'services', n:'Services Section',   d:'Cards with prices & Book Now buttons', price:149 },
+    { id:'gallery',  n:'Photo Gallery',      d:'Masonry gallery with lightbox', price:99 },
+    { id:'team',     n:'Meet the Team',      d:'Staff profiles & specialties', price:79 },
+    { id:'reviews',  n:'Reviews Carousel',   d:'Auto-scrolling testimonials', price:79 },
+    { id:'showcase', n:'Design Showcase',    d:'Trending nail designs hover section', price:79 },
+    { id:'contact',  n:'Contact & Map',      d:'Google Maps + address + hours', price:0, always:true },
+    { id:'faq',      n:'FAQ Accordion',      d:'10 Q&A expandable questions', price:49 },
+  ]},
+  { id:'booking', title:'Booking & Admin', icon:'📅', bg:'rgba(232,93,138,0.12)', items:[
+    { id:'booking',    n:'4-Step Booking Form',     d:'Service → Artist → Date → Confirm', price:349, badge:'hot' },
+    { id:'admin',      n:'Admin Dashboard',         d:'Manage bookings, calendar, stats', price:299, badge:'hot' },
+    { id:'supabase',   n:'Cloud Database',          d:'Cross-device sync — all screens see same data', price:199, badge:'new' },
+    { id:'emailjs_bk', n:'Booking Email Alerts',    d:'Admin notified of every new booking', price:99 },
+    { id:'emailjs_c',  n:'Contact Form Emails',     d:'Contact form sent to admin inbox', price:49 },
+  ]},
+  { id:'lang', title:'Languages', icon:'🌍', bg:'rgba(16,185,129,0.1)', items:[
+    { id:'bilingual', n:'Bilingual EN + FR',       d:'Full toggle English ↔ French', price:199, badge:'rec' },
+    { id:'lang_ar',   n:'Arabic (RTL layout)',     d:'Right-to-left full support', price:249, badge:'new' },
+    { id:'lang_es',   n:'Spanish',                 d:'Complete Spanish translation', price:199 },
+    { id:'lang_zh',   n:'Chinese (Simplified)',    d:'Mandarin translation', price:249 },
+  ]},
+  { id:'seo', title:'SEO & Performance', icon:'🚀', bg:'rgba(245,158,11,0.1)', items:[
+    { id:'seo_basic',  n:'Basic SEO',              d:'Meta tags, Open Graph, mobile-friendly', price:0, always:true },
+    { id:'seo_adv',    n:'Advanced Local SEO',     d:'Schema.org, sitemap, robots.txt, GMB', price:149, badge:'rec' },
+    { id:'analytics',  n:'Google Analytics 4',     d:'Traffic + conversion tracking', price:79 },
+    { id:'pagespeed',  n:'Performance Opt.',       d:'95+ PageSpeed, lazy load, minify', price:149 },
+    { id:'dark_mode',  n:'Dark / Light Mode',      d:'Auto + manual theme switcher', price:79 },
+    { id:'mobile',     n:'Mobile Responsive',      d:'Fully optimized for all screens', price:0, always:true },
+  ]},
+  { id:'extras', title:'Extra Features', icon:'✨', bg:'rgba(232,93,138,0.08)', items:[
+    { id:'ai_chat',   n:'AI Chatbot (ChatGPT)',    d:'24/7 automated FAQ & booking assist', price:399, badge:'new' },
+    { id:'gift',      n:'Gift Card System',        d:'Sell gift cards online', price:349, badge:'hot' },
+    { id:'loyalty',   n:'Loyalty Points Page',     d:'Points tracker for regulars', price:249 },
+    { id:'blog',      n:'Blog / News Section',     d:'Updatable blog for SEO + promos', price:199 },
+    { id:'instagram', n:'Live Instagram Feed',     d:'Auto-updating IG grid on site', price:129, badge:'hot' },
+    { id:'whatsapp',  n:'WhatsApp Float Button',   d:'Click-to-chat floating button', price:0, always:true },
+    { id:'popup',     n:'Promo Popup',             d:'Timed promotional CTA popup', price:99 },
+  ]},
+  { id:'delivery', title:'Delivery & Support', icon:'📦', bg:'rgba(124,58,237,0.08)', items:[
+    { id:'rush',     n:'Rush Delivery (48h)',       d:'Guaranteed in 48 hours', price:299, badge:'hot' },
+    { id:'priority', n:'Priority Delivery (5 days)',d:'Priority queue, 5 business days', price:149 },
+    { id:'domain',   n:'Custom Domain Setup',      d:'Domain connected + SSL cert', price:99 },
+    { id:'training', n:'Owner Training (1 hr)',    d:'Video walkthrough of admin panel', price:99 },
+    { id:'extra_rev',n:'Extra Revision Round',     d:'+1 revision (2 included in Pro+)', price:199 },
+  ]},
+  { id:'maint', title:'Monthly Maintenance', icon:'🔄', bg:'rgba(16,185,129,0.08)', items:[
+    { id:'m_basic', n:'Basic Care',      d:'3 changes/mo, email support',            price:49,  mo:true },
+    { id:'m_std',   n:'Standard',        d:'6 changes/mo, backups, 24h support',     price:99,  mo:true },
+    { id:'m_full',  n:'Full Management', d:'Unlimited changes, analytics, phone',    price:199, mo:true },
+  ]},
+];
+
+const COLORS = [
+  { n:'Hot Pink + Violet', p:'#E85D8A', s:'#7C3AED' },
+  { n:'Rose Gold',         p:'#C9956C', s:'#F2D4CB' },
+  { n:'Coral Red',         p:'#FF6B6B', s:'#FF8E53' },
+  { n:'Emerald Green',     p:'#059669', s:'#34D399' },
+  { n:'Royal Blue',        p:'#2563EB', s:'#818CF8' },
+  { n:'Deep Purple',       p:'#7C3AED', s:'#A78BFA' },
+  { n:'Gold Luxury',       p:'#D97706', s:'#FCD34D' },
+  { n:'Midnight',          p:'#1E293B', s:'#64748B' },
+];
+
+const TYPOS = [
+  { id:'modern',  n:'Modern Sans',    d:'Clean & minimal — Inter + DM Sans' },
+  { id:'elegant', n:'Elegant Serif',  d:'Luxury feel — Playfair + Cormorant' },
+  { id:'bold',    n:'Bold Display',   d:'Strong — Oswald + Lato' },
+  { id:'playful', n:'Playful Script', d:'Friendly — Pacifico + Nunito' },
+];
+const MOODS = [
+  { id:'luxury',  n:'Luxury Dark',   d:'Dark backgrounds, gold accents' },
+  { id:'minimal', n:'Clean Minimal', d:'White space, light & airy' },
+  { id:'vibrant', n:'Vibrant Bold',  d:'Bright colors, energetic' },
+  { id:'pastel',  n:'Soft Pastel',   d:'Gentle tones, feminine & warm' },
+];
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+let hrs = { Mon:{on:true,o:'09:00',c:'19:00'}, Tue:{on:true,o:'09:00',c:'19:00'}, Wed:{on:true,o:'09:00',c:'19:00'}, Thu:{on:true,o:'09:00',c:'19:00'}, Fri:{on:true,o:'09:00',c:'19:00'}, Sat:{on:true,o:'09:00',c:'18:00'}, Sun:{on:true,o:'10:00',c:'17:00'} };
+
+let S = {
+  pkg:'pro',
+  feats: new Set(['hero','contact','faq','seo_basic','mobile','emailjs_bk','services','gallery','team','reviews','booking','admin','bilingual','seo_adv','dark_mode','whatsapp']),
+  color: COLORS[0], typo:'elegant', mood:'luxury',
+};
+
+document.addEventListener('DOMContentLoaded',()=>{ renderPkgs(); renderFeats(); renderHours(); renderBrand(); calcPrice(); });
+
+// ─── PACKAGES ─────────────────────────────────────────────────────
+function renderPkgs() {
+  document.getElementById('pkg-grid').innerHTML = PKGS.map(p=>`
+    <div class="pkg-card${S.pkg===p.id?' sel':''}" onclick="selPkg('${p.id}')">
+      <div class="pkg-chk">✓</div>
+      <div class="pkg-bdg ${p.bc}">${p.badge}</div>
+      <div class="pkg-name">${p.name}</div>
+      <div class="pkg-price">CA$${p.price.toLocaleString()}<sub> one-time</sub></div>
+      <div class="pkg-desc">${p.desc}</div>
+    </div>`).join('');
+}
+
+function selPkg(id) {
+  S.pkg = id;
+  S.feats = new Set(PKGS.find(p=>p.id===id).inc);
+  renderPkgs(); renderFeats(); calcPrice();
+}
+
+// ─── FEATURES ─────────────────────────────────────────────────────
+function renderFeats() {
+  const pkg = PKGS.find(p=>p.id===S.pkg);
+  document.getElementById('feat-wrap').innerHTML = SECS.map(sec=>{
+    const on = sec.items.filter(it=>S.feats.has(it.id)).length;
+    return `<div class="fsec">
+      <div class="fsec-hdr">
+        <div class="fsec-ico" style="background:${sec.bg}">${sec.icon}</div>
+        <div class="fsec-ttl">${sec.title}</div>
+        <div class="fsec-cnt">${on}/${sec.items.length}</div>
+      </div>
+      <div class="fgrid${sec.items.length>4?' g3':''}">
+        ${sec.items.map(it=>fiHTML(it,pkg)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function fiHTML(it, pkg) {
+  const on = S.feats.has(it.id);
+  const inPkg = pkg.inc.includes(it.id) && !it.mo;
+  let cls = 'fi';
+  if (it.always) cls += ' inc locked';
+  else if (on) cls += ' on';
+  const pt = it.always ? `<span class="fpt free">Always on</span>`
+    : inPkg ? `<span class="fpt free">✓ In package</span>`
+    : it.price===0 ? `<span class="fpt free">Free</span>`
+    : `<span class="fpt">+CA$${it.price}${it.mo?'/mo':''}</span>`;
+  const bdg = it.badge==='new' ? '<span class="fbdg fn-new">New</span>'
+    : it.badge==='hot' ? '<span class="fbdg fn-hot">Popular</span>'
+    : it.badge==='rec' ? '<span class="fbdg fn-rec">Recommended</span>' : '';
+  const oc = it.always ? '' : `onclick="tog('${it.id}')"`;
+  return `<div class="${cls}" ${oc}>
+    <div class="ftog"></div>
+    <div class="fb">
+      <div class="fn">${it.n} ${bdg} ${pt}</div>
+      <div class="fd">${it.d}</div>
+    </div>
+  </div>`;
+}
+
+function tog(id) {
+  const moIds = ['m_basic','m_std','m_full'];
+  if (S.feats.has(id)) {
+    S.feats.delete(id);
+  } else {
+    S.feats.add(id);
+    if (moIds.includes(id)) moIds.filter(m=>m!==id).forEach(m=>S.feats.delete(m));
+  }
+  renderFeats(); calcPrice(); if(document.getElementById('v-quote').style.display!=='none') renderQ();
+}
+
+// ─── HOURS ────────────────────────────────────────────────────────
+function renderHours() {
+  document.getElementById('hgrid').innerHTML = DAYS.map(d=>{
+    const h=hrs[d];
+    return `<div class="hday${h.on?' on':''}" id="hd-${d}">
+      <div class="hday-name">${d}</div>
+      <div class="hday-status">${h.on?'Open':'Closed'}</div>
+      ${h.on?`<input class="hinput" type="time" value="${h.o}" onchange="hrs['${d}'].o=this.value" onclick="event.stopPropagation()">
+      <input class="hinput" type="time" value="${h.c}" onchange="hrs['${d}'].c=this.value" onclick="event.stopPropagation()">`:
+      `<div style="font-size:0.6rem;color:var(--text3)">—</div>`}
+    </div>`;
+  }).join('');
+  DAYS.forEach(d=>{ document.getElementById(`hd-${d}`).addEventListener('click',()=>{ hrs[d].on=!hrs[d].on; renderHours(); }); });
+}
+
+// ─── BRAND ────────────────────────────────────────────────────────
+function renderBrand() {
+  document.getElementById('cdots').innerHTML = COLORS.map((c,i)=>`
+    <div class="cdot${S.color.p===c.p?' active':''}" style="background:linear-gradient(135deg,${c.p},${c.s})" title="${c.n}" onclick="setCol(${i})"></div>`).join('');
+  document.getElementById('tgrid').innerHTML = TYPOS.map(t=>`
+    <div class="fi${S.typo===t.id?' on':''}" onclick="S.typo='${t.id}';renderBrand()">
+      <div class="ftog"></div><div class="fb"><div class="fn">${t.n}</div><div class="fd">${t.d}</div></div>
+    </div>`).join('');
+  document.getElementById('mgrid').innerHTML = MOODS.map(m=>`
+    <div class="fi${S.mood===m.id?' on':''}" onclick="S.mood='${m.id}';renderBrand()">
+      <div class="ftog"></div><div class="fb"><div class="fn">${m.n}</div><div class="fd">${m.d}</div></div>
+    </div>`).join('');
+}
+
+function setCol(i) {
+  S.color=COLORS[i];
+  document.getElementById('cpick').value=S.color.p;
+  document.getElementById('chex').value=S.color.p;
+  renderBrand();
+}
+function setCustom(v) {
+  if(/^#[0-9A-Fa-f]{6}$/.test(v)){ S.color={n:'Custom',p:v,s:v}; document.getElementById('cpick').value=v; document.getElementById('chex').value=v; renderBrand(); }
+}
+
+// ─── PRICE ────────────────────────────────────────────────────────
+function calcPrice() {
+  const pkg = PKGS.find(p=>p.id===S.pkg);
+  const allItems = SECS.flatMap(s=>s.items);
+  let base=pkg.price, add=0, mo=0;
+  S.feats.forEach(id=>{
+    const it=allItems.find(x=>x.id===id);
+    if(!it||it.always||it.price===0) return;
+    if(it.mo){ mo+=it.price; return; }
+    if(!pkg.inc.includes(id)) add+=it.price;
+  });
+  const tot=base+add, dep=Math.round(tot*0.5);
+  document.getElementById('sb-total').textContent=`CA$${tot.toLocaleString()}`;
+  document.getElementById('sb-break').innerHTML=`
+    <div class="sb-row"><span class="l">Base package</span><span class="v">CA$${base.toLocaleString()}</span></div>
+    ${add>0?`<div class="sb-row"><span class="l">Add-ons</span><span class="v">+CA$${add.toLocaleString()}</span></div>`:''}
+    ${mo>0?`<div class="sb-row mo"><span class="l">Maintenance</span><span class="v">CA$${mo}/mo</span></div>`:''}
+    <div class="sb-row tot"><span class="l">Total</span><span class="v">CA$${tot.toLocaleString()}</span></div>`;
+  document.getElementById('sb-dep').style.display='block';
+  document.getElementById('sb-dep-amt').textContent=`CA$${dep.toLocaleString()}`;
+  return {base,add,tot,mo,dep};
+}
+
+// ─── QUOTE VIEW ───────────────────────────────────────────────────
+function renderQ() {
+  document.getElementById('qbox').innerHTML = buildQ();
+}
+
+function buildQ() {
+  const pkg=PKGS.find(p=>p.id===S.pkg);
+  const {tot,mo,dep}=calcPrice();
+  let rows=SECS.map(sec=>{
+    const act=sec.items.filter(it=>S.feats.has(it.id));
+    if(!act.length) return '';
+    return `<div class="qrow shdr"><span class="ql">${sec.icon} ${sec.title}</span></div>`+
+      act.map(it=>{
+        const inp=pkg.inc.includes(it.id);
+        const v=it.always?'Included':inp?'In package':it.price===0?'Free':it.mo?`CA$${it.price}/mo`:`+CA$${it.price}`;
+        const c=(it.always||inp)?'inc':it.price===0?'free':'';
+        return `<div class="qrow"><span class="ql">${it.n}</span><span class="qv ${c}">${v}</span></div>`;
+      }).join('');
+  }).join('');
+  return `<div class="q-title">Selected Configuration</div>
+    <div class="qrow"><span class="ql"><strong>Package</strong></span><span class="qv">${pkg.name} — CA$${pkg.price.toLocaleString()}</span></div>
+    ${rows}
+    <div class="qtot">
+      <div><div class="qtot-l">Total Investment</div>${mo>0?`<div class="qtot-mo">+ CA$${mo}/mo</div>`:''}</div>
+      <div style="text-align:right"><div class="qtot-p">CA$${tot.toLocaleString()}</div><div style="font-size:0.7rem;color:var(--text2)">Deposit: CA$${dep.toLocaleString()}</div></div>
+    </div>`;
+}
+
+// ─── VIEWS ────────────────────────────────────────────────────────
+function gv(v, btn) {
+  ['features','hours','brand','quote'].forEach(x=>document.getElementById(`v-${x}`).style.display=x===v?'block':'none');
+  document.querySelectorAll('.sb-nb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(v==='quote') renderQ();
+}
+
+// ─── PROPOSAL ─────────────────────────────────────────────────────
+function openProposal() {
+  document.getElementById('proposal-html').innerHTML = buildProposal();
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+function buildProposal() {
+  const cn=document.getElementById('c-name').value||'Valued Client';
+  const ce=document.getElementById('c-email').value||'';
+  const cp=document.getElementById('c-phone').value||'';
+  const pkg=PKGS.find(p=>p.id===S.pkg);
+  const {tot,mo,dep}=calcPrice();
+  const today=new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+  const openDays=DAYS.filter(d=>hrs[d].on).map(d=>`${d} ${hrs[d].o}–${hrs[d].c}`).join(' · ');
+  const typoName=TYPOS.find(t=>t.id===S.typo)?.n;
+  const moodName=MOODS.find(m=>m.id===S.mood)?.n;
+
+  const secs = SECS.map(sec=>{
+    const act=sec.items.filter(it=>S.feats.has(it.id));
+    if(!act.length) return '';
+    return `<div class="p-sec">
+      <div class="p-sec-lbl">${sec.icon} ${sec.title}</div>
+      ${act.map(it=>{
+        const inp=pkg.inc.includes(it.id);
+        const v=it.always?'Included':inp?'In Package':it.price===0?'Free':it.mo?`CA$${it.price}/month`:`+CA$${it.price}`;
+        const c=(it.always||inp||it.price===0)?'free':'';
+        return `<div class="p-item"><span class="pn">${it.n}<small>${it.d}</small></span><span class="pv ${c}">${v}</span></div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="p-logo">Web<span>Craft</span> Agency</div>
+    <div class="p-client">For: <strong>${cn}</strong>${ce?` · ${ce}`:''}${cp?` · ${cp}`:''} &nbsp;·&nbsp; ${today}</div>
+    <div class="p-h1">Website Proposal</div>
+    <div class="p-sub">
+      Package: <strong>${pkg.name}</strong> · ${pkg.desc}<br>
+      ${openDays?`Business hours: ${openDays}<br>`:''}
+      Brand color: ${S.color.n} (${S.color.p}) · Typography: ${typoName} · Design mood: ${moodName}
+    </div>
+    <div class="p-sec">
+      <div class="p-sec-lbl">📦 Base Package</div>
+      <div class="p-item"><span class="pn">${pkg.name}<small>${pkg.desc}</small></span><span class="pv">CA$${pkg.price.toLocaleString()}</span></div>
+    </div>
+    ${secs}
+    <div class="p-totbox">
+      <div>
+        <div class="p-tot-l">Total Investment (one-time)</div>
+        ${mo>0?`<div class="p-tot-mo">+ CA$${mo}/month maintenance</div>`:''}
+        <div style="font-size:0.73rem;color:#aaa;margin-top:3px">50% deposit to start: CA$${dep.toLocaleString()}</div>
+      </div>
+      <div class="p-tot-p">CA$${tot.toLocaleString()}</div>
+    </div>
+    <div class="p-terms">
+      <strong>Terms & Conditions:</strong> 50% deposit required to begin. Balance due on delivery. Price valid 30 days. Includes 2 revision rounds (Pro & Premium). Additional revisions billed at CA$75/hr. Domain, hosting, and third-party fees (Supabase, EmailJS, Google Analytics) are not included unless listed above. Estimated delivery: 5–10 business days.
+    </div>`;
+}
+
+function printIt() { openProposal(); setTimeout(()=>window.print(),400); }
+</script>
+</body>
+</html>
