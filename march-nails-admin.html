@@ -657,7 +657,81 @@ tr:hover td { background: rgba(255,45,120,0.04); }
   align-items: center; justify-content: center;
   cursor: pointer; box-shadow: var(--shadow);
 }
-@media (max-width: 900px) {
+/* ===== TODO LIST ===== */
+.todo-section { margin-bottom: 1.5rem; }
+.todo-section-title {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: 0.65rem; padding: 0.25rem 0;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.todo-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.todo-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.55rem;
+  display: flex; align-items: flex-start; gap: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.todo-item:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+.todo-item.done { opacity: 0.55; }
+.todo-item.done::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(74,222,128,0.04);
+}
+.todo-check {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+  border: 2px solid var(--border-hover);
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition); font-size: 0.75rem;
+}
+.todo-item.done .todo-check {
+  background: var(--green); border-color: var(--green); color: white;
+}
+.todo-body { flex: 1; }
+.todo-title {
+  font-size: 0.9rem; font-weight: 500; color: var(--text);
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+}
+.todo-item.done .todo-title { text-decoration: line-through; color: var(--text-muted); }
+.todo-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.5; }
+.todo-meta {
+  display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; flex-wrap: wrap;
+}
+.todo-time {
+  font-size: 0.68rem; color: var(--text-dim);
+  background: var(--surface-2); padding: 0.15rem 0.5rem;
+  border-radius: 50px; display: flex; align-items: center; gap: 0.25rem;
+}
+.todo-tag {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 50px;
+}
+.tag-critical { background: rgba(248,113,113,0.15); color: var(--red); }
+.tag-important { background: rgba(251,191,36,0.15); color: var(--amber); }
+.tag-growth { background: var(--green-bg); color: var(--green); }
+.tag-quick { background: rgba(124,58,237,0.15); color: var(--violet-light); }
+.todo-priority {
+  font-size: 0.68rem; font-weight: 700; color: var(--text-dim);
+  width: 24px; text-align: center; flex-shrink: 0;
+  margin-top: 3px;
+}
+.todo-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; flex-shrink: 0; }
+.todo-done-date { font-size: 0.68rem; color: var(--green); }
+.todo-link {
+  font-size: 0.72rem; color: var(--hot-pink-light);
+  text-decoration: none; display: flex; align-items: center; gap: 0.2rem;
+}
+.todo-link:hover { color: var(--hot-pink); }
+
   .sidebar { transform: translateX(-100%); box-shadow: none; }
   .sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
   .main { margin-left: 0; }
@@ -803,6 +877,10 @@ tr:hover td { background: rgba(255,45,120,0.04); }
         <span class="nav-item-icon">💅</span> Team
       </div>
       <div class="sidebar-section-label">System</div>
+      <div class="nav-item" data-page="todo">
+        <span class="nav-item-icon">✅</span> To-Do List
+        <span class="nav-badge" id="todo-badge" style="background:var(--amber);"></span>
+      </div>
       <div class="nav-item" data-page="settings">
         <span class="nav-item-icon">⚙️</span> Settings
       </div>
@@ -901,6 +979,29 @@ tr:hover td { background: rgba(255,45,120,0.04); }
       </div>
     </div>
 
+    <!-- TODO PAGE -->
+    <div class="page" id="page-todo">
+      <div class="page-heading">
+        <h1>Priority To-Do List</h1>
+        <p>Click a task to mark it complete. Progress saves automatically.</p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <div id="todo-progress-wrap" style="flex:1;min-width:200px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.4rem;">
+            <span>Overall Progress</span>
+            <span id="todo-pct">0%</span>
+          </div>
+          <div style="height:8px;background:var(--surface-2);border-radius:50px;overflow:hidden;">
+            <div id="todo-bar" style="height:100%;background:var(--gradient);border-radius:50px;transition:width 0.4s ease;width:0%;"></div>
+          </div>
+        </div>
+        <button onclick="resetTodos()" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);padding:0.5rem 1rem;border-radius:var(--radius-sm);font-size:0.75rem;cursor:pointer;">Reset All</button>
+      </div>
+
+      <div id="todo-list"></div>
+    </div>
+
     <!-- SETTINGS PAGE -->
     <div class="page" id="page-settings">
       <div class="page-heading">
@@ -973,8 +1074,35 @@ tr:hover td { background: rgba(255,45,120,0.04); }
           </div>`).join('')}
           <button class="settings-save" style="margin-top:1rem;" onclick="showToast('Hours updated!','success')">Save Hours</button>
         </div>
+        <div class="settings-card" style="grid-column:1/-1;border:1px solid rgba(74,222,128,0.3);">
+          <div class="settings-card-title">🗄️ Supabase — Cross-Device Bookings</div>
+          <div class="settings-card-sub">Connect a free Supabase database so bookings appear on <strong style="color:white;">ALL devices</strong> — PC, iPad, iPhone.</div>
+          <div style="background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.5rem;font-size:0.82rem;line-height:1.8;color:var(--text-muted);">
+            <strong style="color:var(--text);display:block;margin-bottom:0.5rem;">Setup (free, 2 minutes):</strong>
+            1. <a href="https://supabase.com" target="_blank" style="color:#4ade80;">Create free Supabase account</a><br>
+            2. New Project → go to <strong style="color:var(--text);">SQL Editor</strong> → paste and run:<br>
+            <code style="display:block;background:rgba(0,0,0,0.3);padding:0.75rem;border-radius:6px;margin:0.5rem 0;font-size:0.72rem;color:#a0f0a0;">CREATE TABLE bookings (id text primary key, data jsonb, created_at timestamptz default now());<br>ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;<br>CREATE POLICY "pub_insert" ON bookings FOR INSERT WITH CHECK (true);<br>CREATE POLICY "pub_select" ON bookings FOR SELECT USING (true);<br>CREATE POLICY "pub_update" ON bookings FOR UPDATE USING (true);</code>
+            3. <strong style="color:var(--text);">Settings → API</strong> → copy Project URL and anon key below
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div class="settings-field" style="margin:0;">
+              <label class="settings-label">Supabase Project URL</label>
+              <input type="text" class="settings-input" id="ejs-sb-url" placeholder="https://xxxx.supabase.co">
+            </div>
+            <div class="settings-field" style="margin:0;">
+              <label class="settings-label">Supabase Anon Key</label>
+              <input type="text" class="settings-input" id="ejs-sb-key" placeholder="eyJhbGciOi...">
+            </div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+            <button class="settings-save" style="background:linear-gradient(135deg,#22c55e,#16a34a);" onclick="saveSupabaseKeys()">💾 Save & Connect</button>
+            <button style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:#4ade80;padding:0.65rem 1.25rem;border-radius:50px;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="testSupabase()">Test Connection</button>
+            <span id="sb-status" style="font-size:0.8rem;"></span>
+          </div>
+        </div>
+
         <div class="settings-card" style="grid-column:1/-1;">
-          <div class="settings-card-title">📧 EmailJS — Live Email Setup</div>
+          <div class="settings-card-title">📧 EmailJS — Email Notifications</div>
           <div class="settings-card-sub">
             Fill in your free EmailJS credentials so every booking sends a real email to <strong style="color:var(--hot-pink-light);">admin@admin.com</strong>.
           </div>
@@ -1076,15 +1204,57 @@ document.getElementById('logout-btn').addEventListener('click', () => {
 });
 
 // ===== DATA =====
-function getBookings() {
+// ── SUPABASE ─────────────────────────────────────────────────────
+function getSBConfig() {
+  return {
+    url: document.getElementById('ejs-sb-url')?.value || localStorage.getItem('sb_url') || '',
+    key: document.getElementById('ejs-sb-key')?.value || localStorage.getItem('sb_key') || '',
+  };
+}
+
+async function getBookings() {
+  const { url, key } = getSBConfig();
+  if (url && key) {
+    try {
+      const r = await fetch(`${url}/rest/v1/bookings?select=data&order=created_at.desc`, {
+        headers: { 'apikey': key, 'Authorization': `Bearer ${key}` }
+      });
+      if (r.ok) {
+        const rows = await r.json();
+        const remote = rows.map(row => row.data);
+        localStorage.setItem('march_bookings', JSON.stringify(remote));
+        return remote;
+      }
+    } catch(e) { console.warn('Supabase fetch error:', e); }
+  }
   return JSON.parse(localStorage.getItem('march_bookings') || '[]');
 }
-function saveBookings(data) {
+
+async function saveBookings(data) {
   localStorage.setItem('march_bookings', JSON.stringify(data));
 }
 
-function loadAll() {
-  renderStats();
+async function updateBookingStatus(id, status) {
+  const { url, key } = getSBConfig();
+  // Update locally
+  const all = JSON.parse(localStorage.getItem('march_bookings') || '[]');
+  const idx = all.findIndex(b => b.id === id);
+  if (idx > -1) { all[idx].status = status; localStorage.setItem('march_bookings', JSON.stringify(all)); }
+  // Update in Supabase
+  if (url && key) {
+    try {
+      const booking = all[idx];
+      await fetch(`${url}/rest/v1/bookings?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': key, 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ data: booking })
+      });
+    } catch(e) { console.warn('Supabase update error:', e); }
+  }
+}
+
+async function loadAll() {
+  await renderStats();
   renderRecentTable();
   renderBookingsTable();
   renderCalendar();
@@ -1118,8 +1288,8 @@ document.getElementById('sidebar-toggle').addEventListener('click', () => {
 });
 
 // ===== STATS =====
-function renderStats() {
-  const bookings = getBookings();
+async function renderStats() {
+  const bookings = await getBookings();
   const total = bookings.length;
   const pending = bookings.filter(b => b.status === 'pending').length;
   const confirmed = bookings.filter(b => b.status === 'confirmed').length;
@@ -1260,13 +1430,9 @@ document.getElementById('search-input').addEventListener('input', function() {
 });
 
 // ===== STATUS UPDATE =====
-function updateStatus(id, status) {
-  const bookings = getBookings();
-  const idx = bookings.findIndex(b => b.id === id);
-  if (idx === -1) return;
-  bookings[idx].status = status;
-  saveBookings(bookings);
-  loadAll();
+async function updateStatus(id, status) {
+  await updateBookingStatus(id, status);
+  await loadAll();
   const msgs = { confirmed: '✅ Booking confirmed!', cancelled: '🚫 Booking cancelled.', completed: '🎉 Marked as completed!' };
   showToast(msgs[status] || 'Status updated', status === 'cancelled' ? 'error' : 'success');
 }
@@ -1494,9 +1660,229 @@ async function testEmail() {
   }
 }
 
+
+// ===== SUPABASE KEY MANAGEMENT =====
+function loadSavedSupabaseKeys() {
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (url) { const el = document.getElementById('ejs-sb-url'); if(el) el.value = url; }
+  if (key) { const el = document.getElementById('ejs-sb-key'); if(el) el.value = key; }
+  if (url && key) {
+    const st = document.getElementById('sb-status');
+    if(st) st.innerHTML = '<span style="color:#4ade80;">✓ Connected — bookings sync across all devices</span>';
+  }
+}
+
+function saveSupabaseKeys() {
+  const url = document.getElementById('ejs-sb-url')?.value.trim();
+  const key = document.getElementById('ejs-sb-key')?.value.trim();
+  if (!url || !key) { showToast('Fill in both URL and key.', 'error'); return; }
+  localStorage.setItem('sb_url', url);
+  localStorage.setItem('sb_key', key);
+  document.getElementById('sb-status').innerHTML = '<span style="color:#4ade80;">✓ Saved!</span>';
+  showToast('Supabase connected! Bookings now sync across all devices.', 'success');
+  loadAll();
+}
+
+async function testSupabase() {
+  const url = document.getElementById('ejs-sb-url')?.value.trim();
+  const key = document.getElementById('ejs-sb-key')?.value.trim();
+  const st = document.getElementById('sb-status');
+  if (!url || !key) { showToast('Enter URL and key first.', 'error'); return; }
+  st.innerHTML = '<span style="color:var(--amber);">Testing...</span>';
+  try {
+    const r = await fetch(`${url}/rest/v1/bookings?select=id&limit=1`, {
+      headers: { 'apikey': key, 'Authorization': `Bearer ${key}` }
+    });
+    if (r.ok) {
+      const data = await r.json();
+      st.innerHTML = `<span style="color:#4ade80;">✅ Connected! ${data.length} booking(s) found.</span>`;
+      showToast('Supabase connection successful!', 'success');
+      localStorage.setItem('sb_url', url);
+      localStorage.setItem('sb_key', key);
+    } else {
+      st.innerHTML = `<span style="color:var(--red);">✗ Error ${r.status} — check URL and key</span>`;
+    }
+  } catch(e) {
+    st.innerHTML = `<span style="color:var(--red);">✗ ${e.message}</span>`;
+  }
+}
+
+// ===== TODO LIST =====
+const TODOS = [
+  {
+    id: 'domain', priority: 1, section: '🚨 Critical — Do This First',
+    title: 'Buy a Custom Domain',
+    desc: 'Get marchnails.ca or marchnails.com. Right now the site URL is garagusu.github.io/marchnails — that is not professional and hurts SEO. Cost: ~CA$15/yr.',
+    time: '1 day', tag: 'critical',
+    link: { label: 'Buy on Namecheap →', url: 'https://www.namecheap.com/domains/registration/results/?domain=marchnails' },
+  },
+  {
+    id: 'index', priority: 2, section: '🚨 Critical — Do This First',
+    title: 'Create index.html (Make Site Accessible from Root URL)',
+    desc: 'Add an index.html file that redirects to march-nails-v3.html. Right now opening garagusu.github.io/marchnails shows a 404 error — this is the first thing clients see.',
+    time: '1 hour', tag: 'critical',
+    link: null,
+  },
+  {
+    id: 'admin_password', priority: 3, section: '🚨 Critical — Do This First',
+    title: 'Change Admin Panel Password',
+    desc: 'The default password admin123 is visible in the public GitHub repository. Anyone can find it. Change it immediately in the admin JS code.',
+    time: '5 minutes', tag: 'critical',
+    link: null,
+  },
+  {
+    id: 'photos', priority: 4, section: '⚡ High Impact — This Week',
+    title: 'Add Real Service Photos',
+    desc: 'Service cards currently show emoji icons with gradient backgrounds. Replace with real professional nail photos. Download free photos from Pexels (pexels.com/search/nail+salon) and put them in the assets/ folder.',
+    time: '1 week', tag: 'important',
+    link: { label: 'Browse Pexels →', url: 'https://www.pexels.com/search/nail%20salon/' },
+  },
+  {
+    id: 'analytics', priority: 5, section: '⚡ High Impact — This Week',
+    title: 'Set Up Google Analytics 4',
+    desc: 'Right now you have zero data on who visits the site, where they come from, or what they click. GA4 is free and takes one afternoon to set up. Essential for proving ROI.',
+    time: '1 day', tag: 'important',
+    link: { label: 'Set up GA4 →', url: 'https://analytics.google.com/' },
+  },
+  {
+    id: 'supabase', priority: 6, section: '⚡ High Impact — This Week',
+    title: 'Set Up Supabase Database (Cross-Device Bookings)',
+    desc: 'Bookings only save in the browser they were made on. Without Supabase, bookings made on iPhone won\'t show on your PC — and vice versa. Free tier is enough. See the Settings tab for setup instructions.',
+    time: '1 day', tag: 'important',
+    link: { label: 'Create free Supabase account →', url: 'https://supabase.com' },
+  },
+  {
+    id: 'booking_simplify', priority: 7, section: '🔧 Improvements — Next 2 Weeks',
+    title: 'Simplify Booking Form (2 Steps Instead of 4)',
+    desc: 'Studies show each extra form step costs ~20% of users. The artist selection step can be made optional. This alone can increase completed bookings significantly.',
+    time: '3 days', tag: 'important',
+    link: null,
+  },
+  {
+    id: 'instagram', priority: 8, section: '🔧 Improvements — Next 2 Weeks',
+    title: 'Add Live Instagram Feed',
+    desc: 'march.nails has an active Instagram. Embedding the feed on the website shows real, fresh nail art photos and gives visitors a reason to follow. Requires Instagram Basic Display API (free).',
+    time: '2 days', tag: 'growth',
+    link: { label: 'View Instagram →', url: 'https://www.instagram.com/march.nails' },
+  },
+  {
+    id: 'gmb', priority: 9, section: '🔧 Improvements — Next 2 Weeks',
+    title: 'Link Google My Business to Website',
+    desc: 'Add the website URL to the Google Business Profile. This helps Google understand the site is real and local — directly improving Google Maps rankings for "nail salon Kanata" searches.',
+    time: '3 days', tag: 'growth',
+    link: { label: 'Open Google Business →', url: 'https://business.google.com/' },
+  },
+  {
+    id: 'blog', priority: 10, section: '📈 Growth — Next Month',
+    title: 'Start a Blog (Nail Care Tips & Trends)',
+    desc: 'Blog posts like "Best nail designs in Ottawa 2025" and "How long does shellac last?" rank on Google and bring free traffic. Each post = a new door into the website. Start with 4 posts.',
+    time: '1 week setup', tag: 'growth',
+    link: null,
+  },
+];
+
+const TAG_LABELS = { critical:'Critical', important:'Important', growth:'Growth', quick:'Quick Win' };
+
+function getTodoState() {
+  try { return JSON.parse(localStorage.getItem('march_todos') || '{}'); } catch(e) { return {}; }
+}
+function saveTodoState(state) {
+  localStorage.setItem('march_todos', JSON.stringify(state));
+}
+
+function renderTodos() {
+  const state = getTodoState();
+  const list = document.getElementById('todo-list');
+  if (!list) return;
+
+  // Group by section
+  const sections = {};
+  TODOS.forEach(t => {
+    if (!sections[t.section]) sections[t.section] = [];
+    sections[t.section].push(t);
+  });
+
+  list.innerHTML = Object.entries(sections).map(([section, items]) => `
+    <div class="todo-section">
+      <div class="todo-section-title">${section}</div>
+      ${items.map(t => {
+        const done = !!state[t.id]?.done;
+        const doneDate = state[t.id]?.date;
+        return `
+          <div class="todo-item${done?' done':''}" onclick="toggleTodo('${t.id}')">
+            <div class="todo-priority">#${t.priority}</div>
+            <div class="todo-check">${done?'✓':''}</div>
+            <div class="todo-body">
+              <div class="todo-title">
+                ${t.title}
+                <span class="todo-tag tag-${t.tag}">${TAG_LABELS[t.tag]}</span>
+              </div>
+              <div class="todo-desc">${t.desc}</div>
+              <div class="todo-meta">
+                <span class="todo-time">⏱ ${t.time}</span>
+                ${t.link ? `<a class="todo-link" href="${t.link.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t.link.label}</a>` : ''}
+              </div>
+            </div>
+            <div class="todo-right">
+              ${done && doneDate ? `<span class="todo-done-date">✓ Done ${doneDate}</span>` : ''}
+            </div>
+          </div>`;
+      }).join('')}
+    </div>`).join('');
+
+  updateTodoProgress();
+  updateTodoBadge();
+}
+
+function toggleTodo(id) {
+  const state = getTodoState();
+  if (state[id]?.done) {
+    delete state[id];
+  } else {
+    state[id] = { done: true, date: new Date().toLocaleDateString('en-CA', { month:'short', day:'numeric' }) };
+  }
+  saveTodoState(state);
+  renderTodos();
+  const t = TODOS.find(x=>x.id===id);
+  if (t) showToast(state[id] ? `✅ "${t.title}" marked done!` : `↩ Reopened`, state[id] ? 'success' : 'error');
+}
+
+function updateTodoProgress() {
+  const state = getTodoState();
+  const done = Object.values(state).filter(v=>v.done).length;
+  const total = TODOS.length;
+  const pct = Math.round((done/total)*100);
+  const bar = document.getElementById('todo-bar');
+  const pctEl = document.getElementById('todo-pct');
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = `${done}/${total} complete (${pct}%)`;
+}
+
+function updateTodoBadge() {
+  const state = getTodoState();
+  const remaining = TODOS.length - Object.values(state).filter(v=>v.done).length;
+  const badge = document.getElementById('todo-badge');
+  if (badge) { badge.textContent = remaining; badge.style.display = remaining > 0 ? 'inline-flex' : 'none'; }
+}
+
+function resetTodos() {
+  if (!confirm('Reset all tasks to incomplete?')) return;
+  localStorage.removeItem('march_todos');
+  renderTodos();
+  showToast('All tasks reset', 'error');
+}
+
+// Patch showPage to render todos when switching
+const _origShowPage = showPage;
+showPage = function(page) {
+  _origShowPage(page);
+  if (page === 'todo') renderTodos();
+};
+
 // Load saved keys on app start
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(loadSavedKeys, 500); // after app renders
+  setTimeout(() => { loadSavedKeys(); loadSavedSupabaseKeys(); renderTodos(); }, 500);
 });
 
 // Poll for new bookings every 30s
