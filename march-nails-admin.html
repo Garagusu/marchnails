@@ -3,1415 +3,1078 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>March Nails — Admin</title>
-<meta name="robots" content="noindex,nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>March Nails — Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-/*──────────────────────────────────────────────
-  TOKENS
-──────────────────────────────────────────────*/
-:root{
-  --bg:#0A0318;
-  --s1:#130826;
-  --s2:#1C0E35;
-  --s3:#251445;
-  --s4:#2E1A55;
-  --s5:#3A2268;
-
-  --pink:#F72585;
-  --pink2:#C9184A;
-  --violet:#7209B7;
-  --cyan:#4CC9F0;
-  --gold:#F8B500;
-  --green:#06D6A0;
-  --red:#EF233C;
-  --amber:#FB8500;
-
-  --text:#EDE9F6;
-  --text2:#8B7AB8;
-  --text3:#554580;
-
-  --b1:rgba(114,9,183,.2);
-  --b2:rgba(247,37,133,.3);
-  --bgreen:rgba(6,214,160,.25);
-  --bred:rgba(239,35,60,.25);
-  --bgold:rgba(248,181,0,.2);
-  --bcyan:rgba(76,201,240,.2);
-  --bamber:rgba(251,133,0,.2);
-
-  --grad:linear-gradient(135deg,#F72585 0%,#7209B7 60%,#4CC9F0 100%);
-  --grad2:linear-gradient(135deg,#F72585,#C9184A);
-  --grad3:linear-gradient(135deg,#7209B7,#4361EE);
-  --grad-gold:linear-gradient(135deg,#F8B500,#FF6B00);
-
-  --sw:256px;
-  --topbar-h:58px;
-  --fs:Inter,system-ui,sans-serif;
-  --fd:Syne,system-ui,sans-serif;
-  --r:12px;--r-sm:8px;--r-xs:6px;--r-lg:18px;
-  --sh:0 4px 20px rgba(0,0,0,.45);
-  --sh-lg:0 12px 40px rgba(0,0,0,.6);
-  --tr:.2s cubic-bezier(.4,0,.2,1);
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0318;--s1:#130826;--s2:#1C0E35;--s3:#251445;--s4:#2E1A55;
+  --pink:#F72585;--violet:#7209B7;--cyan:#4CC9F0;
+  --gold:#F8B500;--green:#06D6A0;--red:#EF233C;--amber:#FB8500;
+  --text:#EDE9F6;--text2:#8B7AB8;--text3:#554580;
+  --b1:rgba(114,9,183,.2);--b2:rgba(247,37,133,.3);
+  --bgreen:rgba(6,214,160,.25);--bred:rgba(239,35,60,.25);
+  --bgold:rgba(248,181,0,.2);--bcyan:rgba(76,201,240,.2);--bamber:rgba(251,133,0,.2);
+  --grad:linear-gradient(135deg,#F72585,#7209B7,#4CC9F0);
+  --font:'Inter',system-ui,sans-serif;--fontd:'Syne',system-ui,sans-serif;
+  --r:12px;--rsm:8px;--rxs:6px;--rl:18px;--sw:242px;
+}
 html{font-size:14px;-webkit-font-smoothing:antialiased}
-body{font-family:var(--fs);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-button{font-family:var(--fs);cursor:pointer;border:none;outline:none}
-input,select,textarea{font-family:var(--fs)}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:var(--font)}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--s1)}
 ::-webkit-scrollbar-thumb{background:var(--s4);border-radius:4px}
-
-/*──────────────────────────────────────────────
-  LOGIN
-──────────────────────────────────────────────*/
-#login{
-  position:fixed;inset:0;z-index:999;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  padding:1.5rem;
-}
-#login::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 20% 50%,rgba(114,9,183,.18),transparent),
-             radial-gradient(ellipse 40% 60% at 80% 30%,rgba(247,37,133,.12),transparent);
-  pointer-events:none;
-}
-.l-card{
-  background:var(--s1);
-  border:1px solid var(--b1);
-  border-radius:24px;
-  padding:2.5rem;
-  width:100%;max-width:380px;
-  box-shadow:var(--sh-lg);
-  position:relative;overflow:hidden;
-}
-.l-card::after{
-  content:'';position:absolute;top:-2px;left:0;right:0;height:2px;
-  background:var(--grad);
-}
-.l-logo{
-  font-family:var(--fd);font-size:1.6rem;font-weight:800;
-  text-align:center;margin-bottom:.25rem;letter-spacing:-.02em;
-}
-.l-logo em{
-  font-style:normal;
-  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.l-sub{text-align:center;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin-bottom:2rem}
-.l-lbl{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-bottom:.35rem}
-.l-inp{
-  width:100%;background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:var(--r-sm);padding:.7rem .9rem;
-  color:var(--text);font-size:.88rem;outline:none;
-  transition:var(--tr);margin-bottom:.9rem;
-}
-.l-inp:focus{border-color:var(--pink);background:rgba(247,37,133,.06);box-shadow:0 0 0 3px rgba(247,37,133,.1)}
-.l-btn{
-  width:100%;padding:.85rem;
-  background:var(--grad);color:#fff;
-  border-radius:var(--r-sm);
-  font-size:.85rem;font-weight:600;letter-spacing:.06em;
-  transition:var(--tr);position:relative;overflow:hidden;
-}
-.l-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(247,37,133,.35)}
-.l-err{font-size:.75rem;color:var(--red);text-align:center;margin-top:.65rem;display:none}
-
-/*──────────────────────────────────────────────
-  LAYOUT
-──────────────────────────────────────────────*/
+/* LOGIN */
+#login{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+#login::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 50%,rgba(114,9,183,.18),transparent),radial-gradient(ellipse 40% 60% at 80% 30%,rgba(247,37,133,.12),transparent);pointer-events:none}
+.lcard{background:var(--s1);border:1px solid var(--b1);border-radius:24px;padding:2.5rem;width:100%;max-width:380px;position:relative;overflow:hidden}
+.lcard::after{content:'';position:absolute;top:-2px;left:0;right:0;height:2px;background:var(--grad)}
+.llogo{font-family:var(--fontd);font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:.2rem}
+.llogo em{font-style:normal;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lsub{text-align:center;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin-bottom:1.75rem}
+.llbl{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-bottom:.35rem}
+.linp{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--rsm);padding:.7rem .9rem;color:var(--text);font-size:.88rem;outline:none;margin-bottom:.9rem}
+.linp:focus{border-color:var(--pink)}
+.lbtn{width:100%;padding:.85rem;background:var(--grad);color:#fff;border-radius:var(--rsm);font-size:.85rem;font-weight:600}
+.lerr{font-size:.75rem;color:var(--red);text-align:center;margin-top:.65rem;display:none}
+/* LAYOUT */
 #app{display:flex;height:100vh;overflow:hidden}
-
-/* SIDEBAR */
-.sidebar{
-  width:var(--sw);flex-shrink:0;
-  background:var(--s1);
-  border-right:1px solid var(--b1);
-  display:flex;flex-direction:column;
-  height:100vh;overflow:hidden;
-  position:relative;transition:transform .3s ease;
-}
-.sidebar::before{
-  content:'';position:absolute;
-  bottom:0;left:0;right:0;height:200px;
-  background:radial-gradient(ellipse at 50% 100%,rgba(114,9,183,.15),transparent 70%);
-  pointer-events:none;
-}
-.sb-top{
-  padding:1.1rem 1rem .9rem;
-  border-bottom:1px solid var(--b1);
-  flex-shrink:0;
-}
-.sb-brand{display:flex;align-items:center;gap:.6rem}
-.sb-brand-icon{
-  width:32px;height:32px;border-radius:var(--r-sm);
-  background:var(--grad);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;flex-shrink:0;
-  box-shadow:0 4px 12px rgba(247,37,133,.3);
-}
-.sb-brand-name{font-family:var(--fd);font-size:1rem;font-weight:700;letter-spacing:-.01em}
-.sb-brand-tag{font-size:.6rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
-.sb-nav{flex:1;overflow-y:auto;padding:.65rem .7rem}
-.sb-section{
-  font-size:.6rem;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--text3);
-  padding:.8rem .5rem .3rem;
-}
-.nav-item{
-  display:flex;align-items:center;gap:.6rem;
-  padding:.58rem .75rem;
-  border-radius:var(--r-sm);
-  font-size:.82rem;font-weight:500;
-  color:var(--text2);cursor:pointer;
-  transition:var(--tr);
-  position:relative;margin-bottom:.06rem;
-  user-select:none;
-}
-.nav-item:hover{background:var(--s3);color:var(--text)}
-/* Ink Streak — signature nav accent */
-.nav-item.active{
-  background:linear-gradient(135deg,rgba(247,37,133,.15),rgba(114,9,183,.08));
-  color:var(--pink);
-  font-weight:600;
-}
-.nav-item.active::before{
-  content:'';position:absolute;
-  left:0;top:50%;transform:translateY(-50%) rotate(-12deg);
-  width:3px;height:65%;
-  background:var(--grad2);
-  border-radius:2px;
-  box-shadow:0 0 8px rgba(247,37,133,.5);
-}
-.nav-icon{width:18px;text-align:center;font-size:.95rem;flex-shrink:0}
-.nav-badge{
-  margin-left:auto;background:var(--pink);color:#fff;
-  font-size:.58rem;font-weight:700;
-  padding:.06rem .35rem;border-radius:50px;
-  min-width:16px;text-align:center;
-}
-.nav-badge.amber{background:var(--amber)}
-.sb-footer{
-  padding:.85rem;border-top:1px solid var(--b1);flex-shrink:0;
-  position:relative;z-index:1;
-}
-.sb-user{display:flex;align-items:center;gap:.6rem}
-.sb-av{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--grad);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(247,37,133,.3);
-}
-.sb-name{font-size:.8rem;font-weight:600}
-.sb-role{font-size:.65rem;color:var(--text3)}
-
+.sidebar{width:var(--sw);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:transform .3s ease}
+.sbtop{padding:1rem 1rem .85rem;border-bottom:1px solid var(--b1);flex-shrink:0}
+.sbbrand{display:flex;align-items:center;gap:.6rem}
+.sbicon{width:30px;height:30px;border-radius:var(--rsm);background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;flex-shrink:0}
+.sbname{font-family:var(--fontd);font-size:.95rem;font-weight:700}
+.sbtag{font-size:.58rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
+.sbnav{flex:1;overflow-y:auto;padding:.55rem .65rem}
+.sbsec{font-size:.58rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);padding:.75rem .5rem .28rem}
+.ni{display:flex;align-items:center;gap:.55rem;padding:.55rem .72rem;border-radius:var(--rsm);font-size:.8rem;font-weight:500;color:var(--text2);cursor:pointer;transition:background .15s,color .15s;position:relative;margin-bottom:.04rem;user-select:none}
+.ni:hover{background:var(--s3);color:var(--text)}
+.ni.active{background:linear-gradient(135deg,rgba(247,37,133,.15),rgba(114,9,183,.08));color:var(--pink);font-weight:600}
+.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%) rotate(-12deg);width:3px;height:60%;background:linear-gradient(135deg,#F72585,#C9184A);border-radius:2px}
+.ni i{width:16px;text-align:center;font-size:.88rem;flex-shrink:0}
+.nbadge{margin-left:auto;background:var(--pink);color:#fff;font-size:.58rem;font-weight:700;padding:.05rem .32rem;border-radius:50px;min-width:15px;text-align:center}
+.nbadge.amb{background:var(--amber)}
+.sbfooter{padding:.8rem;border-top:1px solid var(--b1);flex-shrink:0}
+.sbuser{display:flex;align-items:center;gap:.55rem}
+.sbav{width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
+.sbname2{font-size:.78rem;font-weight:600}
+.sbrole{font-size:.62rem;color:var(--text3)}
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;height:100vh;min-width:0}
-
-/* TOPBAR */
-.topbar{
-  background:var(--s1);border-bottom:1px solid var(--b1);
-  padding:0 1.25rem;
-  height:var(--topbar-h);
-  display:flex;align-items:center;gap:.85rem;
-  flex-shrink:0;
-}
-.tb-menu{
-  width:30px;height:30px;border-radius:var(--r-xs);
-  background:var(--s3);border:1px solid var(--b1);
-  color:var(--text2);display:none;
-  align-items:center;justify-content:center;
-  font-size:.95rem;cursor:pointer;
-}
-.tb-breadcrumb{flex:1}
-.tb-page{font-family:var(--fd);font-size:.95rem;font-weight:700;letter-spacing:-.01em}
-.tb-path{font-size:.7rem;color:var(--text3);margin-top:1px}
-.tb-right{display:flex;align-items:center;gap:.6rem}
-.tb-search{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:50px;padding:.42rem .9rem .42rem 2rem;
-  font-size:.8rem;color:var(--text);outline:none;
-  width:160px;transition:var(--tr);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23554580' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:.65rem center;
-}
-.tb-search:focus{border-color:var(--pink);width:200px;background-color:var(--s3)}
-.tb-search::placeholder{color:var(--text3)}
-.tb-date{font-size:.75rem;color:var(--text2);white-space:nowrap}
-.tb-icon-btn{
-  width:30px;height:30px;border-radius:var(--r-xs);
-  background:var(--s2);border:1px solid var(--b1);
-  color:var(--text2);display:flex;align-items:center;
-  justify-content:center;cursor:pointer;
-  transition:var(--tr);font-size:.85rem;position:relative;
-}
-.tb-icon-btn:hover{border-color:var(--pink);color:var(--pink)}
-.tb-dot{
-  position:absolute;top:3px;right:3px;
-  width:6px;height:6px;border-radius:50%;
-  background:var(--pink);border:1.5px solid var(--s1);
-}
-.logout-btn{
-  padding:.35rem .8rem;
-  background:rgba(239,35,60,.1);
-  border:1px solid rgba(239,35,60,.25);
-  border-radius:50px;font-size:.72rem;color:var(--red);
-  cursor:pointer;transition:var(--tr);
-}
-.logout-btn:hover{background:rgba(239,35,60,.2)}
-
+.topbar{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 1.1rem;height:50px;display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.tbmenu{width:28px;height:28px;border-radius:var(--rxs);background:var(--s3);border:1px solid var(--b1);color:var(--text2);display:none;align-items:center;justify-content:center;cursor:pointer}
+.tbtitle{font-family:var(--fontd);font-size:.9rem;font-weight:700;flex:1}
+.tbdate{font-size:.72rem;color:var(--text2);white-space:nowrap}
+.tbright{display:flex;align-items:center;gap:.55rem}
+.tbbtn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--b2);border-radius:50px;font-size:.72rem;cursor:pointer;background:rgba(247,37,133,.1);color:var(--pink)}
+.tbnotif{position:relative;cursor:pointer;color:var(--text2);font-size:.95rem;display:flex;align-items:center}
+.tbnotif .dot{position:absolute;top:-2px;right:-2px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--s1)}
+.logoutbtn{padding:.32rem .75rem;background:rgba(239,35,60,.1);border:1px solid rgba(239,35,60,.25);border-radius:50px;font-size:.7rem;color:var(--red);cursor:pointer}
 /* PAGES */
-.pages{flex:1;overflow-y:auto;padding:1.4rem}
-.page{display:none;animation:fadeUp .25s ease}
-.page.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
+.pages{flex:1;overflow-y:auto;padding:1.2rem}
+.pg{display:none;animation:fadeUp .22s ease}
+.pg.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 /* PAGE HEADER */
-.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:.85rem;margin-bottom:1.25rem;flex-wrap:wrap}
-.ph-left h1{font-family:var(--fd);font-size:1.25rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.12rem}
-.ph-left p{font-size:.78rem;color:var(--text2)}
-.ph-right{display:flex;gap:.4rem;flex-wrap:wrap;align-items:flex-start}
-
+.ph{margin-bottom:12px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.phl h1{font-family:var(--fontd);font-size:1.2rem;font-weight:700;margin-bottom:2px}
+.phl p{font-size:.76rem;color:var(--text2)}
+.phr{display:flex;gap:.35rem;flex-wrap:wrap}
 /* PERIOD TABS */
-.ptabs{display:flex;gap:.2rem;background:var(--s2);border:1px solid var(--b1);border-radius:50px;padding:.2rem}
-.ptab{
-  padding:.3rem .72rem;border-radius:50px;
-  font-size:.72rem;font-weight:500;
-  cursor:pointer;color:var(--text2);
-  transition:var(--tr);border:none;background:transparent;
-}
-.ptab.active{background:var(--grad);color:#fff;box-shadow:0 2px 10px rgba(247,37,133,.3)}
-
-/* KPI GRID */
-.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;margin-bottom:1.25rem}
-.kpi{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:var(--r);padding:1rem 1rem .85rem;
-  position:relative;overflow:hidden;
-  transition:var(--tr);cursor:default;
-}
-.kpi:hover{border-color:var(--b2);transform:translateY(-2px);box-shadow:var(--sh)}
-.kpi-top-line{position:absolute;top:0;left:0;right:0;height:2px}
-.kpi-icon{
-  width:32px;height:32px;border-radius:var(--r-xs);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.95rem;margin-bottom:.65rem;flex-shrink:0;
-}
-.kpi-value{
-  font-family:var(--fd);font-size:1.45rem;font-weight:700;
-  letter-spacing:-.03em;line-height:1;margin-bottom:.2rem;
-}
-.kpi-label{font-size:.7rem;color:var(--text2);font-weight:500;margin-bottom:.3rem;letter-spacing:.02em}
-.kpi-delta{font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:.2rem}
-.delta-up{color:var(--green)}.delta-down{color:var(--red)}.delta-neu{color:var(--amber)}
-
-/* GRID LAYOUTS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
-.g3{display:grid;grid-template-columns:2fr 1fr;gap:.85rem;margin-bottom:.85rem}
-.g3r{display:grid;grid-template-columns:1fr 2fr;gap:.85rem;margin-bottom:.85rem}
-.g3eq{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:.85rem}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:.85rem}
-.span2{grid-column:span 2}
-
+.ptabs{display:flex;gap:.18rem;background:var(--s2);border:1px solid var(--b1);border-radius:50px;padding:.18rem}
+.ptab{padding:.28rem .65rem;border-radius:50px;font-size:.7rem;font-weight:500;cursor:pointer;color:var(--text2);transition:.15s;border:none;background:transparent}
+.ptab.on{background:var(--grad);color:#fff}
+/* KPI */
+.kg{display:grid;gap:7px;margin-bottom:12px}
+.kg12{grid-template-columns:repeat(6,minmax(0,1fr))}
+.kg4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kg3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:9px 11px;position:relative;overflow:hidden;transition:.18s}
+.kc:hover{border-color:var(--b2);transform:translateY(-1px)}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kclr,var(--pink))}
+.kci{font-size:1rem;margin-bottom:6px;color:var(--kclr,var(--pink))}
+.kcv{font-size:1.35rem;font-weight:700;font-family:var(--fontd);line-height:1;margin-bottom:2px}
+.kcl{font-size:.68rem;color:var(--text2);margin-bottom:2px}
+.kcd{font-size:.68rem;font-weight:600;color:var(--green)}
+.kcd.neg{color:var(--red)}.kcd.neu{color:var(--amber)}
+/* GRIDS */
+.gg{display:grid;gap:9px;margin-bottom:9px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:2fr 1fr}
+.g3r{grid-template-columns:1fr 2fr}
 /* CARD */
-.card{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:var(--r);padding:1.1rem;
-  transition:var(--tr);
-}
-.card:hover{border-color:rgba(114,9,183,.35)}
-.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.9rem;gap:.5rem;flex-wrap:wrap}
-.card-title{font-family:var(--fd);font-size:.88rem;font-weight:700;letter-spacing:-.01em}
-.card-sub{font-size:.7rem;color:var(--text2);margin-top:.1rem}
-.card-badge{
-  font-size:.65rem;font-weight:600;padding:.15rem .5rem;
-  border-radius:50px;white-space:nowrap;
-}
-.badge-green{background:rgba(6,214,160,.12);color:var(--green);border:1px solid var(--bgreen)}
-.badge-pink{background:rgba(247,37,133,.1);color:#FF6ECC;border:1px solid var(--b2)}
-.badge-amber{background:rgba(251,133,0,.1);color:var(--amber);border:1px solid var(--bamber)}
-.badge-cyan{background:var(--bcyan);color:var(--cyan);border:1px solid rgba(76,201,240,.3)}
-.badge-red{background:rgba(239,35,60,.1);color:var(--red);border:1px solid var(--bred)}
-
-/* CHART WRAPPER */
-.cw{position:relative;height:210px}
-.cw-tall{position:relative;height:265px}
-.cw-sm{position:relative;height:155px}
-.cw-xs{position:relative;height:120px}
-
-/* DATA TABLE */
-.tbl-wrap{overflow-x:auto}
+.card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:12px;transition:.15s}
+.card:hover{border-color:rgba(114,9,183,.3)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px;gap:5px;flex-wrap:wrap}
+.ct{font-family:var(--fontd);font-size:.85rem;font-weight:700}
+.cs{font-size:.68rem;color:var(--text3);margin-top:1px}
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;font-size:.65rem;font-weight:600;padding:.15rem .48rem;border-radius:50px;white-space:nowrap}
+.bp{background:rgba(247,37,133,.1);color:#FF6ECC;border:1px solid var(--b2)}
+.bg{background:rgba(6,214,160,.1);color:var(--green);border:1px solid var(--bgreen)}
+.ba{background:rgba(251,133,0,.1);color:var(--amber);border:1px solid var(--bamber)}
+.br{background:rgba(239,35,60,.1);color:var(--red);border:1px solid var(--bred)}
+.bb{background:rgba(76,201,240,.1);color:var(--cyan);border:1px solid var(--bcyan)}
+.bv{background:rgba(114,9,183,.12);color:#C77DFF;border:1px solid rgba(114,9,183,.3)}
+.bgold{background:rgba(248,181,0,.12);color:var(--gold);border:1px solid var(--bgold)}
+/* TABLE */
+.tw{overflow-x:auto}
 .tbl{width:100%;border-collapse:collapse}
-.tbl th{
-  font-size:.64rem;font-weight:600;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--text2);
-  padding:.55rem .8rem;text-align:left;
-  border-bottom:1px solid var(--b1);white-space:nowrap;
-}
-.tbl td{
-  font-size:.82rem;padding:.65rem .8rem;
-  border-bottom:1px solid rgba(114,9,183,.07);
-  vertical-align:middle;
-}
+.tbl th{font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);padding:5px 7px;text-align:left;border-bottom:1px solid var(--b1);white-space:nowrap}
+.tbl td{font-size:.8rem;padding:6px 7px;border-bottom:1px solid rgba(114,9,183,.06);vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:rgba(114,9,183,.05)}
-.td-strong{font-weight:600}
-.td-muted{color:var(--text2)}
-.td-mono{font-family:ui-monospace,monospace;font-size:.78rem}
-
-/* STATUS BADGES */
-.status{display:inline-flex;align-items:center;gap:.25rem;font-size:.66rem;font-weight:600;padding:.15rem .5rem;border-radius:50px}
-.s-confirmed{background:var(--bcyan);color:var(--cyan);border:1px solid rgba(76,201,240,.3)}
-.s-pending{background:var(--bamber);color:var(--amber);border:1px solid rgba(251,133,0,.25)}
-.s-completed{background:rgba(6,214,160,.1);color:var(--green);border:1px solid var(--bgreen)}
-.s-cancelled{background:var(--bred);color:var(--red);border:1px solid rgba(239,35,60,.3)}
-
-/* ACTION BUTTONS */
-.act-btn{
-  padding:.26rem .6rem;border-radius:var(--r-xs);
-  font-size:.68rem;font-weight:500;
-  cursor:pointer;transition:var(--tr);border:1px solid;
-}
-.act-confirm{background:rgba(6,214,160,.1);border-color:var(--bgreen);color:var(--green)}
-.act-cancel{background:rgba(239,35,60,.1);border-color:var(--bred);color:var(--red)}
-.act-view{background:var(--bcyan);border-color:rgba(76,201,240,.3);color:var(--cyan)}
-.act-done{background:rgba(6,214,160,.1);border-color:var(--bgreen);color:var(--green)}
-
+.tbl tr:hover td{background:rgba(114,9,183,.04)}
+.tds{font-weight:600}.tdm{color:var(--text2)}
+/* STATUS */
+.st{display:inline-flex;align-items:center;font-size:.65rem;font-weight:600;padding:.15rem .48rem;border-radius:50px}
+.sc{background:rgba(76,201,240,.1);color:var(--cyan);border:1px solid var(--bcyan)}
+.sp{background:rgba(251,133,0,.1);color:var(--amber);border:1px solid var(--bamber)}
+.sd{background:rgba(6,214,160,.1);color:var(--green);border:1px solid var(--bgreen)}
+.sx{background:rgba(239,35,60,.1);color:var(--red);border:1px solid var(--bred)}
+.sw2{background:rgba(114,9,183,.12);color:#C77DFF;border:1px solid rgba(114,9,183,.3)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border:1px solid var(--b1);border-radius:50px;font-size:.73rem;cursor:pointer;background:var(--s3);color:var(--text);transition:.15s;font-family:var(--font)}
+.btn:hover{border-color:var(--pink);color:var(--pink)}
+.btnp{background:var(--grad);border-color:transparent;color:#fff;font-weight:600}
+.btnp:hover{opacity:.88;color:#fff}
+.btnsm{padding:3px 8px;font-size:.68rem}
+.btnd{background:rgba(239,35,60,.1);border-color:var(--bred);color:var(--red)}
+.actrow{display:flex;gap:3px;flex-wrap:wrap}
 /* AVATAR */
-.av{width:28px;height:28px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:#fff;flex-shrink:0}
-.av-sm{width:22px;height:22px;font-size:.6rem}
-
-/* RANK LIST */
-.rank-item{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px solid rgba(114,9,183,.07)}
-.rank-item:last-child{border-bottom:none}
-.rank-n{width:20px;height:20px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--text2);flex-shrink:0}
-.rank-n.gold{background:var(--grad-gold);color:#fff}
-.rank-n.silver{background:linear-gradient(135deg,#C0C0C0,#888);color:#fff}
-.rank-n.bronze{background:linear-gradient(135deg,#CD7F32,#8B4513);color:#fff}
-.rank-body{flex:1;min-width:0}
-.rank-name{font-size:.8rem;font-weight:500;margin-bottom:.15rem}
-.rank-meta{font-size:.67rem;color:var(--text2)}
-.rank-val{font-size:.85rem;font-weight:700;color:var(--gold);font-family:var(--fd);white-space:nowrap}
-
+.av{width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
+.avsm{width:20px;height:20px;font-size:.6rem}
+/* FORM */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.fg{display:flex;flex-direction:column;gap:3px}
+.flbl{font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
+.finp{padding:6px 9px;border:1px solid var(--b1);border-radius:var(--rxs);font-size:.8rem;background:var(--s3);color:var(--text);outline:none;font-family:var(--font);width:100%}
+.finp:focus{border-color:var(--pink)}
+.fsel{padding:6px 9px;border:1px solid var(--b1);border-radius:var(--rxs);font-size:.8rem;background:var(--s3);color:var(--text);outline:none;font-family:var(--font);width:100%}
 /* PROGRESS */
-.prog{height:4px;background:var(--s4);border-radius:4px;overflow:hidden;margin-top:.35rem}
-.prog-bar{height:100%;border-radius:4px;transition:width .7s ease}
-
+.prog{height:4px;background:var(--s4);border-radius:4px;overflow:hidden;margin-top:3px}
+.pb{height:100%;border-radius:4px;transition:width .6s}
+/* RANK */
+.ri{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid rgba(114,9,183,.06)}
+.ri:last-child{border-bottom:none}
+.rn{width:18px;height:18px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:var(--text2);flex-shrink:0}
+.rn.g1{background:linear-gradient(135deg,#F8B500,#FF6B00);color:#fff}
+.rn.g2{background:linear-gradient(135deg,#C0C0C0,#888);color:#fff}
+.rn.g3{background:linear-gradient(135deg,#CD7F32,#8B4513);color:#fff}
+.rb{flex:1;min-width:0}
+.rname{font-size:.8rem;font-weight:500;margin-bottom:1px}
+.rmeta{font-size:.68rem;color:var(--text2)}
+.rval{font-size:.85rem;font-weight:700;color:var(--gold);font-family:var(--fontd);white-space:nowrap}
 /* STAFF CARDS */
-.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:.75rem;margin-bottom:.85rem}
-.s-card{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:var(--r);padding:1rem;
-  text-align:center;transition:var(--tr);
-}
-.s-card:hover{border-color:var(--b2);transform:translateY(-2px);box-shadow:var(--sh)}
-.s-card-av{
-  width:48px;height:48px;border-radius:50%;background:var(--grad);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;font-weight:700;color:#fff;
-  margin:0 auto .6rem;border:2px solid rgba(247,37,133,.25);
-}
-.s-card-name{font-family:var(--fd);font-size:.9rem;font-weight:700;margin-bottom:.1rem}
-.s-card-role{font-size:.68rem;color:var(--text2);margin-bottom:.7rem}
-.s-stats{display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
-.s-stat{background:var(--s3);border-radius:var(--r-xs);padding:.38rem}
-.s-stat-v{font-size:.9rem;font-weight:700;color:var(--pink);font-family:var(--fd)}
-.s-stat-l{font-size:.6rem;color:var(--text3)}
-
-/* CALENDAR */
-.cal-hdr{display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem}
-.cal-nav{width:28px;height:28px;border-radius:var(--r-xs);background:var(--s3);border:1px solid var(--b1);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr);font-size:.9rem}
-.cal-nav:hover{border-color:var(--pink);color:var(--pink)}
-.cal-title{font-family:var(--fd);font-size:.95rem;font-weight:700;flex:1}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem}
-.cal-dh{text-align:center;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:.28rem 0}
-.cal-cell{background:var(--s3);border:1px solid rgba(114,9,183,.1);border-radius:var(--r-xs);min-height:64px;padding:.35rem;cursor:pointer;transition:var(--tr)}
-.cal-cell:hover{border-color:var(--pink)}
-.cal-cell.today{border-color:var(--pink);background:rgba(247,37,133,.08)}
-.cal-cell.other{opacity:.3}
-.cal-dn{font-size:.68rem;font-weight:600;margin-bottom:.18rem}
-.cal-ev{font-size:.58rem;background:rgba(247,37,133,.18);color:#FF9ECC;padding:.05rem .28rem;border-radius:3px;margin-bottom:.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-ev.done{background:rgba(6,214,160,.15);color:var(--green)}
-
-/* HEATMAP */
-.hm-grid{display:grid;grid-template-columns:38px repeat(13,1fr);gap:2.5px}
-.hm-rl{font-size:.58rem;color:var(--text3);text-align:right;padding-right:4px;display:flex;align-items:center;justify-content:flex-end}
-.hm-cl{font-size:.56rem;color:var(--text3);text-align:center;padding-bottom:3px}
-.hm-cell{height:20px;border-radius:2px;cursor:pointer;transition:var(--tr)}
-.hm-cell:hover{transform:scale(1.2);z-index:1;position:relative}
-
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px;margin-bottom:9px}
+.scard{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px;text-align:center;transition:.15s}
+.scard:hover{border-color:var(--b2);transform:translateY(-2px)}
+.scav{width:44px;height:44px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;margin:0 auto 7px;border:2px solid rgba(247,37,133,.2)}
+.scname{font-family:var(--fontd);font-size:.88rem;font-weight:700;margin-bottom:1px}
+.scrole{font-size:.68rem;color:var(--text2);margin-bottom:7px}
+.scstats{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.ss{background:var(--s3);border-radius:var(--rxs);padding:4px}
+.ssv{font-size:.88rem;font-weight:700;color:var(--pink);font-family:var(--fontd)}
+.ssl{font-size:.58rem;color:var(--text3)}
+/* TIMELINE */
+.tline{display:flex;flex-direction:column}
+.tli{display:flex;gap:9px;padding-bottom:9px;position:relative}
+.tli:not(:last-child)::after{content:'';position:absolute;left:10px;top:22px;bottom:0;width:1px;background:var(--b1)}
+.tldot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#fff;z-index:1}
+.tlb{flex:1;padding-top:2px}
+.tlttl{font-size:.8rem;font-weight:500;margin-bottom:1px}
+.tlm{font-size:.68rem;color:var(--text2)}
+/* ALERTS */
+.alert{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;border-radius:var(--rxs);margin-bottom:4px;border:1px solid}
+.ar{background:rgba(239,35,60,.07);border-color:var(--bred)}.ar i{color:var(--red)}
+.aa{background:rgba(251,133,0,.07);border-color:var(--bamber)}.aa i{color:var(--amber)}
+.ab{background:rgba(76,201,240,.07);border-color:var(--bcyan)}.ab i{color:var(--cyan)}
+.ag{background:rgba(6,214,160,.07);border-color:var(--bgreen)}.ag i{color:var(--green)}
+.alertbody{flex:1;font-size:.78rem}
+.alerttime{font-size:.67rem;color:var(--text2);white-space:nowrap}
+/* SWITCH */
+.sw{position:relative;width:30px;height:17px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.swsl{position:absolute;inset:0;background:var(--s4);border-radius:50px;cursor:pointer;transition:.2s}
+.swsl::before{content:'';position:absolute;height:13px;width:13px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.swsl{background:var(--pink)}
+.sw input:checked+.swsl::before{transform:translateX(13px)}
+/* FINANCE */
+.finrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(114,9,183,.06);font-size:.8rem}
+.finrow:last-child{border-bottom:none}
+.fincat{color:var(--text2)}
+.finpos{color:var(--green);font-weight:600}
+.finneg{color:var(--red);font-weight:600}
 /* TODO */
-.todo-prog-row{display:flex;justify-content:space-between;font-size:.73rem;color:var(--text2);margin-bottom:.35rem}
-.todo-sec{font-size:.6rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);padding:.65rem 0 .3rem;display:flex;align-items:center;gap:.4rem}
-.todo-sec::after{content:'';flex:1;height:1px;background:var(--b1)}
-.todo-item{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:var(--r-sm);padding:.75rem .9rem;
-  margin-bottom:.38rem;display:flex;gap:.65rem;
-  align-items:flex-start;cursor:pointer;transition:var(--tr);
-}
-.todo-item:hover{border-color:var(--b2);transform:translateY(-1px)}
-.todo-item.done{opacity:.45}
-.todo-ck{
-  width:18px;height:18px;border-radius:50%;
-  border:1.5px solid var(--b2);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.6rem;transition:var(--tr);margin-top:1px;
-}
-.todo-item.done .todo-ck{background:var(--green);border-color:var(--green);color:#fff}
-.todo-body{flex:1;min-width:0}
-.todo-title{font-size:.81rem;font-weight:500;margin-bottom:.12rem;display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
-.todo-item.done .todo-title{text-decoration:line-through;color:var(--text2)}
-.todo-desc{font-size:.7rem;color:var(--text2);line-height:1.4;margin-bottom:.28rem}
-.todo-meta{display:flex;gap:.3rem;align-items:center;flex-wrap:wrap}
-.todo-time{font-size:.63rem;background:var(--s4);padding:.08rem .38rem;border-radius:50px;color:var(--text2)}
-.tag{font-size:.6rem;font-weight:600;padding:.08rem .38rem;border-radius:50px}
-.tag-crit{background:rgba(239,35,60,.12);color:var(--red)}
-.tag-imp{background:rgba(251,133,0,.12);color:var(--amber)}
-.tag-grow{background:rgba(6,214,160,.1);color:var(--green)}
-
-/* SETTINGS */
-.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
-.set-card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:1.1rem}
-.set-card.full{grid-column:1/-1}
-.set-title{font-family:var(--fd);font-size:.88rem;font-weight:700;margin-bottom:.2rem}
-.set-sub{font-size:.73rem;color:var(--text2);margin-bottom:.9rem;line-height:1.5}
-.set-lbl{display:block;font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:.3rem}
-.set-inp{
-  width:100%;background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:var(--r-xs);padding:.58rem .8rem;
-  font-size:.83rem;color:var(--text);outline:none;transition:var(--tr);
-  margin-bottom:.75rem;
-}
-.set-inp:focus{border-color:var(--pink);background:rgba(247,37,133,.05)}
-.set-btn{
-  padding:.5rem 1.1rem;background:var(--grad);color:#fff;
-  border-radius:50px;font-size:.75rem;font-weight:600;
-  letter-spacing:.05em;cursor:pointer;transition:var(--tr);
-}
-.set-btn:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 6px 20px rgba(247,37,133,.3)}
-
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;align-items:center;justify-content:center;padding:1rem}
-.modal-bg.open{display:flex}
-.modal{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r-lg);padding:1.5rem;max-width:500px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--sh-lg)}
-.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
-.modal-ttl{font-family:var(--fd);font-size:.95rem;font-weight:700}
-.modal-x{width:26px;height:26px;border-radius:50%;background:var(--s4);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.75rem;transition:var(--tr)}
-.modal-x:hover{background:var(--red);color:#fff}
-.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.6rem;font-size:.83rem}
-.modal-field .fl{font-size:.64rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.18rem}
-.modal-field .fv{font-weight:500}
-.modal-actions{display:flex;gap:.4rem;margin-top:1.1rem;flex-wrap:wrap}
-
-/* REPORTS */
-.rep-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.65rem;margin-bottom:1.1rem}
-.rk{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:.85rem;transition:var(--tr)}
-.rk:hover{border-color:var(--b2)}
-.rk-icon{font-size:1.2rem;margin-bottom:.4rem}
-.rk-val{font-family:var(--fd);font-size:1.2rem;font-weight:700;color:var(--pink);margin-bottom:.12rem}
-.rk-lbl{font-size:.68rem;color:var(--text2)}
-
+.tdit{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;border:1px solid var(--b1);border-radius:var(--rsm);margin-bottom:4px;cursor:pointer;transition:.15s}
+.tdit:hover{border-color:var(--b2)}
+.tdit.done{opacity:.4}
+.tdck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--b2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.58rem;margin-top:1px}
+.tdit.done .tdck{background:var(--green);border-color:var(--green);color:#fff}
+.tdttl{font-size:.8rem;font-weight:500;margin-bottom:1px}
+.tdit.done .tdttl{text-decoration:line-through;color:var(--text2)}
+.tddesc{font-size:.68rem;color:var(--text2)}
+/* STOCK WARN */
+.skw{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(239,35,60,.07);border:1px solid var(--bred);border-radius:var(--rsm);margin-bottom:4px;font-size:.8rem}
+.skw i{color:var(--red);flex-shrink:0}
+/* AI CHAT */
+.chatarea{height:230px;overflow-y:auto;display:flex;flex-direction:column;padding:2px;margin-bottom:7px}
+.aibub{background:var(--s3);border:1px solid var(--b1);border-radius:var(--rl);border-bottom-left-radius:3px;padding:9px 11px;max-width:86%;margin-bottom:7px;font-size:.8rem;line-height:1.5;align-self:flex-start}
+.ubub{background:var(--grad);color:#fff;border-radius:var(--rl);border-bottom-right-radius:3px;padding:9px 11px;max-width:86%;margin-bottom:7px;font-size:.8rem;line-height:1.5;align-self:flex-end}
+.aitype{display:flex;gap:3px;padding:9px 11px;background:var(--s3);border:1px solid var(--b1);border-radius:var(--rl);border-bottom-left-radius:3px;width:fit-content;align-self:flex-start;margin-bottom:7px}
+.aitype span{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:bonce .8s infinite}
+.aitype span:nth-child(2){animation-delay:.15s}
+.aitype span:nth-child(3){animation-delay:.3s}
+@keyframes bonce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.chatinprow{display:flex;gap:5px}
+.chatinp{flex:1;padding:7px 11px;border:1px solid var(--b1);border-radius:50px;font-size:.8rem;background:var(--s3);color:var(--text);outline:none;font-family:var(--font)}
+.chatinp:focus{border-color:var(--pink)}
+/* SEP */
+.sep{height:1px;background:var(--b1);margin:9px 0}
 /* TOAST */
-#toast{position:fixed;bottom:1.25rem;right:1.25rem;z-index:2000;display:flex;flex-direction:column;gap:.4rem;pointer-events:none}
-.toast{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.8rem;display:flex;align-items:center;gap:.5rem;box-shadow:var(--sh-lg);animation:slideR .25s ease;max-width:260px}
-.toast.ok{border-color:var(--bgreen)}.toast.err{border-color:var(--bred)}.toast.inf{border-color:var(--bamber)}
+#toast{position:fixed;bottom:1.1rem;right:1.1rem;z-index:2000;display:flex;flex-direction:column;gap:.35rem;pointer-events:none}
+.titem{background:var(--s2);border:1px solid var(--b1);border-radius:var(--rsm);padding:7px 11px;font-size:.8rem;display:flex;align-items:center;gap:5px;animation:slideR .22s ease;max-width:270px;pointer-events:auto}
+.titem.ok{border-color:var(--bgreen)}.titem.err{border-color:var(--bred)}.titem.inf{border-color:var(--bamber)}
 @keyframes slideR{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
-
 /* RESPONSIVE */
 @media(max-width:980px){
   .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:300;transform:translateX(-100%)}
-  .sidebar.open{transform:none;box-shadow:var(--sh-lg)}
-  .tb-menu{display:flex}
-  .kpi-grid{grid-template-columns:repeat(3,1fr)}
-  .g2,.g3,.g3r,.g3eq{grid-template-columns:1fr}
-  .set-grid{grid-template-columns:1fr}
-  .span2{grid-column:auto}
+  .sidebar.open{transform:none}
+  .tbmenu{display:flex}
+  .kg12,.kg4{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .gg.g2,.gg.g3,.gg.g3r{grid-template-columns:1fr}
+  .sgrid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){
-  .kpi-grid{grid-template-columns:1fr 1fr}
-  .pages{padding:.9rem}
-  .staff-grid{grid-template-columns:1fr 1fr}
-  .tb-date{display:none}
-  .tb-search{display:none}
+  .kg12,.kg4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pages{padding:.85rem}
+  .frow{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-
-<!-- ██ LOGIN ██ -->
+<!-- LOGIN -->
 <div id="login">
-  <div class="l-card">
-    <div class="l-logo">March <em>Nails</em></div>
-    <div class="l-sub">Admin · 700 March Road, Kanata</div>
-    <label class="l-lbl">Email</label>
-    <input class="l-inp" id="l-em" type="email" value="admin@admin.com">
-    <label class="l-lbl">Password</label>
-    <input class="l-inp" id="l-pw" type="password" value="admin123">
-    <button class="l-btn" onclick="doLogin()">Sign In</button>
-    <div class="l-err" id="l-err">Incorrect email or password</div>
+  <div class="lcard">
+    <div class="llogo">March <em>Nails</em></div>
+    <div class="lsub">Management System · Kanata, Ottawa</div>
+    <label class="llbl">Email</label>
+    <input class="linp" id="l-em" type="email" value="admin@admin.com">
+    <label class="llbl">Password</label>
+    <input class="linp" id="l-pw" type="password" value="admin123">
+    <button class="lbtn" onclick="doLogin()">Sign In</button>
+    <div class="lerr" id="l-err">Incorrect email or password</div>
   </div>
 </div>
-
-<!-- ██ APP ██ -->
+<!-- APP -->
 <div id="app" style="display:none">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sb-top">
-      <div class="sb-brand">
-        <div class="sb-brand-icon">💅</div>
-        <div><div class="sb-brand-name">March Nails</div><div class="sb-brand-tag">Admin Dashboard</div></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sbtop">
+    <div class="sbbrand">
+      <div class="sbicon"><i class="fa-solid fa-star"></i></div>
+      <div><div class="sbname">March Nails</div><div class="sbtag">Admin Panel</div></div>
+    </div>
+  </div>
+  <nav class="sbnav">
+    <div class="sbsec">Main</div>
+    <div class="ni active" data-pg="dash"><i class="fa-solid fa-gauge-high"></i>Dashboard</div>
+    <div class="ni" data-pg="notif"><i class="fa-solid fa-bell"></i>Notifications<span class="nbadge">7</span></div>
+    <div class="sbsec">Operations</div>
+    <div class="ni" data-pg="appt"><i class="fa-solid fa-calendar-check"></i>Appointments<span class="nbadge" id="nb-p">3</span></div>
+    <div class="ni" data-pg="crm"><i class="fa-solid fa-users"></i>Customers (CRM)</div>
+    <div class="ni" data-pg="staff"><i class="fa-solid fa-id-badge"></i>Staff</div>
+    <div class="ni" data-pg="services"><i class="fa-solid fa-scissors"></i>Services</div>
+    <div class="sbsec">Stock & Finance</div>
+    <div class="ni" data-pg="inventory"><i class="fa-solid fa-boxes-stacked"></i>Inventory<span class="nbadge amb">!</span></div>
+    <div class="ni" data-pg="finance"><i class="fa-solid fa-money-bill-trend-up"></i>Finance</div>
+    <div class="sbsec">Growth</div>
+    <div class="ni" data-pg="loyalty"><i class="fa-solid fa-crown"></i>Loyalty & Campaigns</div>
+    <div class="ni" data-pg="marketing"><i class="fa-solid fa-bullhorn"></i>Marketing</div>
+    <div class="ni" data-pg="reviews"><i class="fa-solid fa-star-half-stroke"></i>Reviews</div>
+    <div class="sbsec">Platform</div>
+    <div class="ni" data-pg="website"><i class="fa-solid fa-globe"></i>Website Manager</div>
+    <div class="ni" data-pg="ai"><i class="fa-solid fa-robot"></i>AI Assistant</div>
+    <div class="ni" data-pg="reports"><i class="fa-solid fa-chart-column"></i>Reports</div>
+    <div class="ni" data-pg="settings"><i class="fa-solid fa-gear"></i>Settings</div>
+  </nav>
+  <div class="sbfooter">
+    <div class="sbuser">
+      <div class="sbav">A</div>
+      <div><div class="sbname2">Admin</div><div class="sbrole">Salon Owner</div></div>
+    </div>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar">
+    <button class="tbmenu" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div class="tbtitle" id="tb-ttl">Dashboard</div>
+    <div class="tbdate" id="tb-dt"></div>
+    <div class="tbright">
+      <button class="tbbtn" onclick="go('appt')"><i class="fa-solid fa-plus"></i>New Appointment</button>
+      <div class="tbnotif" onclick="go('notif')"><i class="fa-solid fa-bell fa-lg"></i><div class="dot"></div></div>
+      <button class="logoutbtn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="pages">
+  <!-- DASHBOARD -->
+  <div class="pg on" id="pg-dash">
+    <div class="ph">
+      <div class="phl"><h1 id="dash-gr">Good morning ✦</h1><p id="dash-dt">Loading...</p></div>
+      <div class="phr"><div class="ptabs"><button class="ptab on">Today</button><button class="ptab">Week</button><button class="ptab">Month</button></div></div>
+    </div>
+    <div class="kg kg12" id="dash-kpis"></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div><div class="ct">Upcoming Appointments</div><div class="cs">Today · 12 total</div></div><button class="btn btnsm" onclick="go('appt')">View all →</button></div>
+        <div class="tline">
+          <div class="tli"><div class="tldot" style="background:var(--green)"><i class="fa-solid fa-check" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Emma Johnson · Acrylic Full Set</div><div class="tlm">10:00 · Happy · CA$75 · <span class="st sd">Confirmed</span></div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--amber)"><i class="fa-solid fa-clock" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Sophie Tremblay · Gel-X Extensions</div><div class="tlm">11:30 · Flower · CA$80 · <span class="st sp">Pending</span></div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--violet)"><i class="fa-solid fa-crown" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl"><span style="color:var(--gold)">★ VIP</span> Olivia Chen · Pedicure Shellac</div><div class="tlm">13:00 · Daisy · CA$55 · <span class="st sc">Confirmed</span></div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--pink)"><i class="fa-solid fa-calendar" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Sarah Mitchell · Acrylic Refill</div><div class="tlm">14:30 · Happy · CA$60 · <span class="st sc">Confirmed</span></div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--red)"><i class="fa-solid fa-user-slash" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Lily Park · Manicure Shellac</div><div class="tlm">16:00 · Hannah · <span class="st sx">No-show</span></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Quick Actions</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:11px">
+          <button class="btn" onclick="go('appt')" style="justify-content:flex-start"><i class="fa-solid fa-calendar-plus"></i>New Appointment</button>
+          <button class="btn" onclick="go('crm')" style="justify-content:flex-start"><i class="fa-solid fa-user-plus"></i>Add New Client</button>
+          <button class="btn" onclick="go('finance')" style="justify-content:flex-start"><i class="fa-solid fa-file-invoice-dollar"></i>End of Day Cash Report</button>
+          <button class="btn" onclick="go('marketing')" style="justify-content:flex-start"><i class="fa-brands fa-whatsapp"></i>Send WhatsApp Reminder</button>
+          <button class="btn" onclick="go('inventory')" style="justify-content:flex-start;color:var(--amber)"><i class="fa-solid fa-triangle-exclamation"></i>Critical Stock Alerts (3)</button>
+          <button class="btn" onclick="go('ai')" style="justify-content:flex-start"><i class="fa-solid fa-robot"></i>Get AI Revenue Forecast</button>
+        </div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">Top Services This Month</div>
+        <div class="ri"><div class="rn g1">1</div><div class="rb"><div class="rname">Acrylic Refill</div><div class="rmeta">68 bookings</div><div class="prog"><div class="pb" style="width:100%;background:var(--pink)"></div></div></div><div class="rval">CA$4,080</div></div>
+        <div class="ri"><div class="rn g2">2</div><div class="rb"><div class="rname">Acrylic Full Set</div><div class="rmeta">52 bookings</div><div class="prog"><div class="pb" style="width:76%;background:var(--violet)"></div></div></div><div class="rval">CA$3,900</div></div>
+        <div class="ri"><div class="rn g3">3</div><div class="rb"><div class="rname">Gel-X Extensions</div><div class="rmeta">44 bookings</div><div class="prog"><div class="pb" style="width:65%;background:var(--cyan)"></div></div></div><div class="rval">CA$3,520</div></div>
       </div>
     </div>
-    <nav class="sb-nav">
-      <div class="sb-section">Overview</div>
-      <div class="nav-item active" data-p="dashboard"><span class="nav-icon">📊</span>Dashboard</div>
-      <div class="nav-item" data-p="analytics"><span class="nav-icon">📈</span>Analytics<span class="nav-badge" id="nb-new">New</span></div>
-      <div class="sb-section">Operations</div>
-      <div class="nav-item" data-p="bookings"><span class="nav-icon">📅</span>Bookings<span class="nav-badge" id="nb-pending"></span></div>
-      <div class="nav-item" data-p="calendar"><span class="nav-icon">🗓</span>Calendar</div>
-      <div class="nav-item" data-p="team"><span class="nav-icon">👥</span>Team</div>
-      <div class="nav-item" data-p="customers"><span class="nav-icon">💅</span>Customers</div>
-      <div class="sb-section">Intelligence</div>
-      <div class="nav-item" data-p="reports"><span class="nav-icon">📋</span>Reports</div>
-      <div class="nav-item" data-p="heatmap"><span class="nav-icon">🔥</span>Peak Hours</div>
-      <div class="sb-section">Admin</div>
-      <div class="nav-item" data-p="todo"><span class="nav-icon">✅</span>To-Do<span class="nav-badge amber" id="nb-todo"></span></div>
-      <div class="nav-item" data-p="settings"><span class="nav-icon">⚙️</span>Settings</div>
-    </nav>
-    <div class="sb-footer">
-      <div class="sb-user">
-        <div class="sb-av">A</div>
-        <div><div class="sb-name">Admin</div><div class="sb-role">Salon Owner</div></div>
+    <div class="gg g2">
+      <div class="card"><div class="ch"><div><div class="ct">Weekly Revenue</div><div class="cs">Daily earnings this week</div></div><span class="bdg bg">↑ 18% vs last week</span></div><div style="height:170px"><canvas id="c-rev"></canvas></div></div>
+      <div class="card"><div class="ch"><div><div class="ct">Booking Status</div><div class="cs">This month</div></div></div><div style="height:170px"><canvas id="c-status"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="pg" id="pg-notif">
+    <div class="ph"><div class="phl"><h1>Notification Center</h1><p>All system alerts in one place</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Active Alerts</div><span class="bdg br">7 new</span></div>
+        <div class="alert ar"><i class="fa-solid fa-user-slash"></i><div class="alertbody"><strong>No-show:</strong> Lily Park — missed 16:00 appointment</div><div class="alerttime">Just now</div></div>
+        <div class="alert aa"><i class="fa-solid fa-box-open"></i><div class="alertbody"><strong>Low stock:</strong> Cuticle Oil — only 3 units left</div><div class="alerttime">2 hrs ago</div></div>
+        <div class="alert aa"><i class="fa-solid fa-box-open"></i><div class="alertbody"><strong>Low stock:</strong> Hand Cream Luxe — only 2 units left</div><div class="alerttime">2 hrs ago</div></div>
+        <div class="alert ab"><i class="fa-solid fa-calendar-plus"></i><div class="alertbody"><strong>New booking:</strong> Emma Johnson — Tomorrow 10:00</div><div class="alerttime">1 hr ago</div></div>
+        <div class="alert ag"><i class="fa-solid fa-star"></i><div class="alertbody"><strong>New review:</strong> Olivia Chen — ⭐⭐⭐⭐⭐</div><div class="alerttime">3 hrs ago</div></div>
+        <div class="alert aa"><i class="fa-solid fa-umbrella-beach"></i><div class="alertbody"><strong>Leave request:</strong> Happy — Jul 15–17 (3 days)</div><div class="alerttime">5 hrs ago</div></div>
+        <div class="alert ab"><i class="fa-solid fa-cake-candles"></i><div class="alertbody"><strong>Birthday tomorrow:</strong> Rose Williams — send 10% offer?</div><div class="alerttime">Yesterday</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Notification Preferences</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">New appointment</div><div class="tdm" style="font-size:.7rem">Email + WhatsApp instant</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">Cancellation alert</div><div class="tdm" style="font-size:.7rem">Instant SMS</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">No-show tracking</div><div class="tdm" style="font-size:.7rem">Dashboard alert</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">Critical stock alert</div><div class="tdm" style="font-size:.7rem">Daily email digest</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">Birthday reminder</div><div class="tdm" style="font-size:.7rem">1 day before SMS + coupon</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">Staff leave request</div><div class="tdm" style="font-size:.7rem">WhatsApp</div></div><label class="sw"><input type="checkbox"><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.82rem;font-weight:500">Daily cash summary</div><div class="tdm" style="font-size:.7rem">Nightly 10pm email</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+        </div>
       </div>
     </div>
-  </aside>
+  </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <button class="tb-menu" onclick="toggleSB()">☰</button>
-      <div class="tb-breadcrumb">
-        <div class="tb-page" id="tb-title">Dashboard</div>
-        <div class="tb-path" id="tb-date"></div>
+  <!-- APPOINTMENTS -->
+  <div class="pg" id="pg-appt">
+    <div class="ph"><div class="phl"><h1>Appointment Management</h1><p>Create · Edit · Confirm · No-show tracking · Waitlist · Recurring appointments</p></div></div>
+    <div class="gg g2" style="margin-bottom:9px">
+      <div class="card">
+        <div class="ch"><div class="ct">New Appointment</div></div>
+        <div class="frow">
+          <div class="fg"><label class="flbl">Client</label><select class="fsel"><option>Emma Johnson ★ VIP</option><option>Sophie Tremblay</option><option>Olivia Chen ★ VIP</option><option>Add new client…</option></select></div>
+          <div class="fg"><label class="flbl">Service</label><select class="fsel"><option>Acrylic Full Set — CA$75</option><option>Gel-X Extensions — CA$80</option><option>Pedicure Shellac — CA$55</option><option>Acrylic Refill — CA$60</option></select></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label class="flbl">Staff</label><select class="fsel"><option>Happy (Available ✓)</option><option>Flower (Available ✓)</option><option>Daisy (After 12pm)</option><option>Hannah (Available ✓)</option></select></div>
+          <div class="fg"><label class="flbl">Date & Time</label><input type="datetime-local" class="finp"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label class="flbl">Recurring</label><select class="fsel"><option>One-time</option><option>Every 2 weeks</option><option>Monthly</option><option>Weekly same day</option></select></div>
+          <div class="fg"><label class="flbl">Notes</label><input class="finp" placeholder="Allergy, preference…"></div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn btnp" onclick="toast('Appointment created!','ok')"><i class="fa-solid fa-check"></i>Create Appointment</button>
+          <button class="btn btnsm" onclick="toast('Added to waitlist','inf')"><i class="fa-solid fa-clock"></i>Add to Waitlist</button>
+          <button class="btn btnsm" onclick="toast('Synced to Google Calendar','ok')"><i class="fa-brands fa-google"></i>Sync Calendar</button>
+        </div>
       </div>
-      <div class="tb-right">
-        <input class="tb-search" placeholder="Search bookings...">
-        <div class="tb-date" id="tb-date2"></div>
-        <div class="tb-icon-btn" title="Notifications">🔔<div class="tb-dot"></div></div>
-        <button class="logout-btn" onclick="doLogout()">Sign out</button>
+      <div class="card">
+        <div class="ch"><div><div class="ct">Staff Availability</div><div class="cs">Today</div></div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Staff</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th></tr></thead><tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">H</div>Happy</div></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">F</div>Flower</div></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--cyan)">D</div>Daisy</div></td><td><span style="color:var(--amber)">—</span></td><td><span style="color:var(--amber)">—</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--gold)">H</div>Hannah</div></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--green)">✓</span></td><td><span style="color:var(--red)">✗</span></td><td><span style="color:var(--green)">✓</span></td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ch"><div class="ct">Waitlist</div><span class="bdg ba">2 waiting</span></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Client</th><th>Service</th><th>Preference</th><th></th></tr></thead><tbody>
+          <tr><td>Grace Davis</td><td>Acrylic Full Set</td><td>Weekend</td><td><button class="btn btnsm" onclick="toast('Appointment booked!','ok')">Book</button></td></tr>
+          <tr><td>Zoe Wilson</td><td>Gel-X Extensions</td><td>With Flower</td><td><button class="btn btnsm" onclick="toast('Appointment booked!','ok')">Book</button></td></tr>
+        </tbody></table></div>
       </div>
     </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Appointment List</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="st sd" style="cursor:pointer">Confirmed (48)</span><span class="st sp" style="cursor:pointer">Pending (12)</span><span class="st sx" style="cursor:pointer">No-show (5)</span><span class="st sw2" style="cursor:pointer">Cancelled (8)</span></div></div>
+      <div class="tw"><table class="tbl"><thead><tr><th>#</th><th>Client</th><th>Service</th><th>Staff</th><th>Date & Time</th><th>Price</th><th>Recurring</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        <tr><td class="tdm" style="font-size:.65rem">MN-0001</td><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">E</div><div><div class="tds">Emma Johnson</div><div class="tdm" style="font-size:.65rem">VIP · 28 visits</div></div></div></td><td>Acrylic Full Set</td><td>Happy</td><td class="tdm" style="white-space:nowrap;font-size:.75rem">Sun Jun 15 · 10:00</td><td style="color:var(--gold);font-weight:600">CA$75</td><td><span class="bdg bv">Every 2 wks</span></td><td><span class="st sd">Confirmed</span></td><td><div class="actrow"><button class="btn btnsm">Edit</button><button class="btn btnsm btnd" onclick="toast('Appointment cancelled','err')">Cancel</button></div></td></tr>
+        <tr><td class="tdm" style="font-size:.65rem">MN-0002</td><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">S</div>Sophie Tremblay</div></td><td>Gel-X Extensions</td><td>Flower</td><td class="tdm" style="white-space:nowrap;font-size:.75rem">Sun Jun 15 · 11:30</td><td style="color:var(--gold);font-weight:600">CA$80</td><td><span class="bdg ba">One-time</span></td><td><span class="st sp">Pending</span></td><td><div class="actrow"><button class="btn btnsm" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="toast('Confirmed!','ok')">Confirm</button><button class="btn btnsm btnd">Reject</button></div></td></tr>
+        <tr><td class="tdm" style="font-size:.65rem">MN-0003</td><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--red)">L</div>Lily Park</div></td><td>Manicure Shellac</td><td>Hannah</td><td class="tdm" style="white-space:nowrap;font-size:.75rem">Sun Jun 15 · 16:00</td><td style="color:var(--gold);font-weight:600">CA$35</td><td><span class="bdg ba">One-time</span></td><td><span class="st sx">No-show</span></td><td><div class="actrow"><button class="btn btnsm" onclick="toast('SMS sent','ok')"><i class="fa-brands fa-whatsapp"></i>SMS</button><button class="btn btnsm">Note</button></div></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
 
-    <!-- PAGES -->
-    <div class="pages">
-
-      <!-- ━━━━━ DASHBOARD ━━━━━ -->
-      <div class="page active" id="pg-dashboard">
-        <div class="ph">
-          <div class="ph-left"><h1 id="dash-greeting">Good morning ✦</h1><p id="dash-date">Loading…</p></div>
-          <div class="ph-right"><div class="ptabs"><button class="ptab active" onclick="setPeriod('day',this)">Today</button><button class="ptab" onclick="setPeriod('week',this)">Week</button><button class="ptab" onclick="setPeriod('month',this)">Month</button></div></div>
+  <!-- CRM -->
+  <div class="pg" id="pg-crm">
+    <div class="ph"><div class="phl"><h1>Customer Management (CRM)</h1><p>Profile · Service history · Allergy notes · VIP · Loyalty points · Photo archive · Birthday tracking</p></div><div class="phr"><button class="btn btnp btnsm"><i class="fa-solid fa-user-plus"></i>New Client</button></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Client Profile · Olivia Chen</div><span class="bdg bgold">★ VIP Gold</span></div>
+        <div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:11px">
+          <div style="position:relative"><div class="av" style="width:50px;height:50px;font-size:1.1rem;outline:2px solid var(--gold);outline-offset:2px;flex-shrink:0">O</div><div style="position:absolute;top:-3px;right:-3px;background:var(--gold);color:#fff;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700">★</div></div>
+          <div><div style="font-family:var(--fontd);font-size:.95rem;font-weight:700;margin-bottom:1px">Olivia Chen</div><div class="tdm" style="font-size:.75rem">(613) 555-1234 · olivia@email.com</div><div class="tdm" style="font-size:.75rem">Birthday: Jul 22 · 28 visits · CA$1,680 LTV</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px"><span class="bdg bgold">★ VIP Gold</span><span class="bdg bv">Loyal client</span><span class="bdg bp">Recurring</span></div></div>
         </div>
-        <!-- KPI -->
-        <div class="kpi-grid" id="kpi-grid"></div>
-        <!-- Charts row 1 -->
-        <div class="g3">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Weekly Revenue</div><div class="card-sub">Earnings each day this week</div></div><span class="card-badge badge-green">↑ 18% vs last week</span></div>
-            <div class="cw"><canvas id="c-rev-week"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Booking Status</div><div class="card-sub">This month</div></div></div>
-            <div class="cw"><canvas id="c-status"></canvas></div>
-          </div>
+        <div style="background:var(--s3);border-radius:var(--rxs);padding:9px;margin-bottom:9px">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px"><span style="font-weight:500">Loyalty Points</span><span style="color:var(--gold);font-weight:600">1,240 pts</span></div>
+          <div class="prog"><div class="pb" style="width:72%;background:linear-gradient(90deg,var(--gold),var(--amber))"></div></div>
+          <div class="tdm" style="font-size:.68rem;margin-top:3px">Gold tier · 760 more points = Platinum</div>
         </div>
-        <!-- Charts row 2 -->
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Top Services</div><div class="card-sub">Revenue this month</div></div></div>
-            <div class="cw-sm"><canvas id="c-top-svc"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Artist Share</div><div class="card-sub">Bookings per artist</div></div></div>
-            <div class="cw-sm"><canvas id="c-artists"></canvas></div>
-          </div>
-        </div>
-        <!-- Bottom row -->
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr">
-              <div class="card-title">Recent Bookings</div>
-              <button class="set-btn" style="padding:.3rem .75rem;font-size:.7rem" onclick="showPage('bookings')">View all</button>
-            </div>
-            <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Client</th><th>Service</th><th>Artist</th><th>Date</th><th>Status</th></tr></thead><tbody id="recent-tbody"></tbody></table></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Service Rankings</div><span class="card-badge badge-pink">This month</span></div>
-            <div id="svc-rank"></div>
-          </div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Field</th><th>Info</th></tr></thead><tbody>
+          <tr><td class="tdm"><i class="fa-solid fa-triangle-exclamation" style="color:var(--amber)"></i> Allergy</td><td style="color:var(--red);font-size:.78rem">Acrylic fume sensitivity · No latex</td></tr>
+          <tr><td class="tdm">Preference</td><td style="font-size:.78rem">Pink tones · Long nails · With Flower</td></tr>
+          <tr><td class="tdm">Last note</td><td style="font-size:.78rem">Wedding special set — Aug 20, 2025</td></tr>
+          <tr><td class="tdm">Total spend</td><td style="color:var(--green);font-weight:600">CA$1,680 (28 visits)</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Service History & Before/After Archive</div></div>
+        <div class="tw" style="margin-bottom:9px"><table class="tbl"><thead><tr><th>Date</th><th>Service</th><th>Staff</th><th>Price</th><th>Rating</th></tr></thead><tbody>
+          <tr><td style="white-space:nowrap">Jun 10</td><td>Pedicure Shellac</td><td>Daisy</td><td style="color:var(--green)">CA$55</td><td style="color:var(--gold)">⭐⭐⭐⭐⭐</td></tr>
+          <tr><td style="white-space:nowrap">May 27</td><td>Gel-X Extensions</td><td>Flower</td><td style="color:var(--green)">CA$80</td><td style="color:var(--gold)">⭐⭐⭐⭐⭐</td></tr>
+          <tr><td style="white-space:nowrap">May 13</td><td>Acrylic Refill</td><td>Happy</td><td style="color:var(--green)">CA$60</td><td style="color:var(--gold)">⭐⭐⭐⭐⭐</td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">Before / After Photo Archive</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">
+          <div style="background:var(--s3);border-radius:var(--rxs);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--b1);cursor:pointer"><i class="fa-solid fa-camera" style="font-size:1.1rem;color:var(--text3)"></i><div style="font-size:.6rem;color:var(--text3)">Jun 10 · After</div></div>
+          <div style="background:var(--s3);border-radius:var(--rxs);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--b1);cursor:pointer"><i class="fa-solid fa-camera" style="font-size:1.1rem;color:var(--text3)"></i><div style="font-size:.6rem;color:var(--text3)">May 27 · After</div></div>
+          <div style="background:var(--s3);border-radius:var(--rxs);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--b1);border-style:dashed;cursor:pointer" onclick="toast('Photo uploaded!','ok')"><i class="fa-solid fa-plus" style="font-size:1.1rem;color:var(--text3)"></i><div style="font-size:.6rem;color:var(--text3)">Add Photo</div></div>
         </div>
       </div>
-
-      <!-- ━━━━━ ANALYTICS ━━━━━ -->
-      <div class="page" id="pg-analytics">
-        <div class="ph">
-          <div class="ph-left"><h1>Analytics</h1><p>Deep performance insights · All branches</p></div>
-          <div class="ph-right"><div class="ptabs"><button class="ptab active" onclick="setPeriod('month',this)">Month</button><button class="ptab" onclick="setPeriod('quarter',this)">Quarter</button><button class="ptab" onclick="setPeriod('year',this)">Year</button></div></div>
-        </div>
-        <div class="rep-kpi" id="an-kpis"></div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Monthly Revenue Trend</div><div class="card-sub">Last 12 months</div></div><span class="card-badge badge-green">↑ 24% YoY</span></div>
-            <div class="cw-tall"><canvas id="c-monthly-rev"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Booking Volume</div><div class="card-sub">Appointments per month</div></div></div>
-            <div class="cw-tall"><canvas id="c-monthly-bk"></canvas></div>
-          </div>
-        </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Revenue by Service</div></div></div>
-            <div class="cw"><canvas id="c-svc-pie"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Client Retention</div><div class="card-sub">New vs returning (stacked)</div></div></div>
-            <div class="cw"><canvas id="c-retention"></canvas></div>
-          </div>
-        </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Cancellation Rate</div><div class="card-sub">Monthly trend</div></div><span class="card-badge badge-amber">Avg 11.6%</span></div>
-            <div class="cw"><canvas id="c-cancel"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Avg Ticket Size</div><div class="card-sub">Revenue per appointment</div></div></div>
-            <div class="cw"><canvas id="c-ticket"></canvas></div>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="card-hdr"><div><div class="card-title">Revenue vs Expenses — P&L Overview</div><div class="card-sub">6-month profit & loss</div></div><span class="card-badge badge-green">Net margin: 58%</span></div>
-          <div class="cw"><canvas id="c-pnl"></canvas></div>
-        </div>
-        <!-- Branch comparison -->
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="card-hdr"><div><div class="card-title">Branch Performance</div><div class="card-sub">Compare locations (when multi-branch)</div></div><span class="card-badge badge-cyan">Kanata HQ · Single location</span></div>
-          <div class="cw-sm"><canvas id="c-branch"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">All Clients</div><div style="display:flex;gap:4px"><button class="btn btnsm">Filter</button><button class="btn btnsm" onclick="toast('CSV downloaded','ok')"><i class="fa-solid fa-download"></i>Export</button></div></div>
+      <div class="tw"><table class="tbl"><thead><tr><th>Client</th><th>Tier</th><th>Visits</th><th>LTV</th><th>Last Visit</th><th>Birthday</th><th>Points</th><th>Actions</th></tr></thead><tbody>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">O</div>Olivia Chen</div></td><td><span class="bdg bgold">★ Gold</span></td><td>28</td><td style="color:var(--green);font-weight:600">CA$1,680</td><td>Jun 10</td><td style="color:var(--pink)">Jul 22 ♥</td><td style="color:var(--gold)">1,240</td><td><button class="btn btnsm">Profile</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">E</div>Emma Johnson</div></td><td><span class="bdg bv">Silver</span></td><td>15</td><td style="color:var(--green);font-weight:600">CA$920</td><td>Jun 8</td><td class="tdm">Sep 14</td><td style="color:var(--gold)">680</td><td><button class="btn btnsm">Profile</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--cyan)">S</div>Sophie Tremblay</div></td><td><span class="bdg bb">Standard</span></td><td>6</td><td style="color:var(--green);font-weight:600">CA$380</td><td>Jun 5</td><td class="tdm">Mar 3</td><td style="color:var(--gold)">190</td><td><button class="btn btnsm">Profile</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--red)">L</div>Lily Park</div></td><td><span class="bdg bb">Standard</span></td><td>3</td><td style="color:var(--green);font-weight:600">CA$145</td><td>Jun 15</td><td class="tdm">—</td><td style="color:var(--gold)">72</td><td><button class="btn btnsm">Profile</button></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+  <!-- STAFF -->
+  <div class="pg" id="pg-staff">
+    <div class="ph"><div class="phl"><h1>Staff Management</h1><p>Shifts · Leave management · Commission calculation · Performance · KPI tracking</p></div></div>
+    <div class="sgrid">
+      <div class="scard"><div class="scav">H</div><div class="scname">Happy</div><div class="scrole">Acrylic & Nail Art</div><div class="scstats"><div class="ss"><div class="ssv">48</div><div class="ssl">Bookings</div></div><div class="ss"><div class="ssv">CA$3.2K</div><div class="ssl">Revenue</div></div><div class="ss"><div class="ssv">4.9★</div><div class="ssl">Rating</div></div><div class="ss"><div class="ssv">CA$800</div><div class="ssl">Commission</div></div></div></div>
+      <div class="scard"><div class="scav" style="background:var(--violet)">F</div><div class="scname">Flower</div><div class="scrole">Gel Extensions & Ombre</div><div class="scstats"><div class="ss"><div class="ssv">44</div><div class="ssl">Bookings</div></div><div class="ss"><div class="ssv">CA$3.5K</div><div class="ssl">Revenue</div></div><div class="ss"><div class="ssv">5.0★</div><div class="ssl">Rating</div></div><div class="ss"><div class="ssv">CA$880</div><div class="ssl">Commission</div></div></div></div>
+      <div class="scard"><div class="scav" style="background:var(--cyan)">D</div><div class="scname">Daisy</div><div class="scrole">Shellac & Chrome</div><div class="scstats"><div class="ss"><div class="ssv">38</div><div class="ssl">Bookings</div></div><div class="ss"><div class="ssv">CA$1.9K</div><div class="ssl">Revenue</div></div><div class="ss"><div class="ssv">4.8★</div><div class="ssl">Rating</div></div><div class="ss"><div class="ssv">CA$475</div><div class="ssl">Commission</div></div></div></div>
+      <div class="scard"><div class="scav" style="background:var(--gold)">H</div><div class="scname">Hannah</div><div class="scrole">Pedicure Specialist</div><div class="scstats"><div class="ss"><div class="ssv">35</div><div class="ssl">Bookings</div></div><div class="ss"><div class="ssv">CA$1.5K</div><div class="ssl">Revenue</div></div><div class="ss"><div class="ssv">4.9★</div><div class="ssl">Rating</div></div><div class="ss"><div class="ssv">CA$375</div><div class="ssl">Commission</div></div></div></div>
+    </div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Shift Schedule · This Week</div><button class="btn btnp btnsm" onclick="toast('Shift saved','ok')">Save</button></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Staff</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead><tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:3px"><div class="av avsm">H</div>Happy</div></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sx" style="font-size:.62rem">Off</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sd" style="font-size:.62rem">10–5</span></td><td><span class="st sw2" style="font-size:.62rem">Closed</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:3px"><div class="av avsm" style="background:var(--violet)">F</div>Flower</div></td><td><span class="st sd" style="font-size:.62rem">10–7</span></td><td><span class="st sd" style="font-size:.62rem">10–7</span></td><td><span class="st sd" style="font-size:.62rem">10–7</span></td><td><span class="st sd" style="font-size:.62rem">10–7</span></td><td><span class="st sd" style="font-size:.62rem">10–7</span></td><td><span class="st sd" style="font-size:.62rem">10–5</span></td><td><span class="st sw2" style="font-size:.62rem">Closed</span></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:3px"><div class="av avsm" style="background:var(--cyan)">D</div>Daisy</div></td><td><span class="st sp" style="font-size:.62rem">12–7</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sd" style="font-size:.62rem">9–6</span></td><td><span class="st sp" style="font-size:.62rem">12–7</span></td><td><span class="st sd" style="font-size:.62rem">10–5</span></td><td><span class="st sw2" style="font-size:.62rem">Closed</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Leave Requests</div><span class="bdg ba">2 pending</span></div>
+        <div class="tw" style="margin-bottom:9px"><table class="tbl"><thead><tr><th>Staff</th><th>Date</th><th>Days</th><th>Reason</th><th>Actions</th></tr></thead><tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:3px"><div class="av avsm">H</div>Happy</div></td><td>Jul 15–17</td><td>3</td><td>Personal</td><td><div class="actrow"><button class="btn btnsm" style="color:var(--green)" onclick="toast('Leave approved','ok')">Approve</button><button class="btn btnsm btnd">Deny</button></div></td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:3px"><div class="av avsm" style="background:var(--cyan)">D</div>Daisy</div></td><td>Jul 22</td><td>1</td><td>Medical</td><td><div class="actrow"><button class="btn btnsm" style="color:var(--green)" onclick="toast('Leave approved','ok')">Approve</button><button class="btn btnsm btnd">Deny</button></div></td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">KPI Tracking · This Month</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div><div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:2px"><span>Happy · Booking target</span><span style="color:var(--green)">48/50 (96%)</span></div><div class="prog"><div class="pb" style="width:96%;background:var(--green)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:2px"><span>Flower · Revenue target</span><span style="color:var(--violet)">CA$3.5K/CA$4K (87%)</span></div><div class="prog"><div class="pb" style="width:87%;background:var(--violet)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:2px"><span>Daisy · Satisfaction</span><span style="color:var(--gold)">4.8/5.0 (96%)</span></div><div class="prog"><div class="pb" style="width:96%;background:var(--gold)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:2px"><span>Hannah · Pedicure target</span><span style="color:var(--pink)">35/40 (87%)</span></div><div class="prog"><div class="pb" style="width:87%;background:var(--pink)"></div></div></div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- ━━━━━ BOOKINGS ━━━━━ -->
-      <div class="page" id="pg-bookings">
-        <div class="ph">
-          <div class="ph-left"><h1>Bookings</h1><p>All appointments · Confirm, complete or cancel</p></div>
-          <div class="ph-right"><button class="set-btn" onclick="exportCSV()">⬇ Export CSV</button></div>
+  <!-- SERVICES -->
+  <div class="pg" id="pg-services">
+    <div class="ph"><div class="phl"><h1>Service Management</h1><p>Categories · Duration · Pricing · Packages · Campaign prices · Seasonal offers</p></div><div class="phr"><button class="btn btnp btnsm" onclick="toast('Service added','ok')"><i class="fa-solid fa-plus"></i>Add Service</button></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Service List</div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Service</th><th>Category</th><th>Duration</th><th>Regular Price</th><th>Campaign</th><th>Active</th></tr></thead><tbody>
+          <tr><td class="tds">Acrylic Full Set</td><td><span class="bdg bp">Nails</span></td><td>90 min</td><td>CA$75</td><td class="tdm">—</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Gel-X Extensions</td><td><span class="bdg bp">Nails</span></td><td>90 min</td><td>CA$80</td><td class="tdm">—</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Pedicure Shellac</td><td><span class="bdg bb">Pedicure</span></td><td>60 min</td><td>CA$55</td><td style="color:var(--green)">CA$45 (Summer)</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Acrylic Refill</td><td><span class="bdg bp">Nails</span></td><td>60 min</td><td>CA$60</td><td class="tdm">—</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Manicure Shellac</td><td><span class="bdg bp">Manicure</span></td><td>45 min</td><td>CA$35</td><td class="tdm">—</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Lash Extensions</td><td><span class="bdg bv">Lash</span></td><td>120 min</td><td>CA$89</td><td class="tdm">—</td><td><label class="sw"><input type="checkbox"><span class="swsl"></span></label></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Service Packages & Campaigns</div><button class="btn btnsm btnp" onclick="toast('Package added','ok')"><i class="fa-solid fa-plus"></i>Add</button></div>
+        <div class="tw" style="margin-bottom:9px"><table class="tbl"><thead><tr><th>Package</th><th>Includes</th><th>Regular</th><th>Package Price</th></tr></thead><tbody>
+          <tr><td class="tds">Mani + Pedi</td><td>Shellac x2</td><td><s class="tdm">CA$90</s></td><td style="color:var(--green);font-weight:600">CA$75</td></tr>
+          <tr><td class="tds">Bridal Package</td><td>Full Set + Pedi + Lash</td><td><s class="tdm">CA$219</s></td><td style="color:var(--green);font-weight:600">CA$189</td></tr>
+          <tr><td class="tds">Monthly VIP</td><td>Refill + Pedi x2</td><td><s class="tdm">CA$115</s></td><td style="color:var(--green);font-weight:600">CA$99</td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">Seasonal Campaigns</div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Campaign</th><th>Dates</th><th>Discount</th><th>Active</th></tr></thead><tbody>
+          <tr><td class="tds">Summer Campaign</td><td class="tdm">Jun 15 – Aug 31</td><td style="color:var(--green)">10% off</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">Student Discount</td><td class="tdm">No expiry</td><td style="color:var(--green)">15% off</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+          <tr><td class="tds">First Visit</td><td class="tdm">No expiry</td><td style="color:var(--green)">20% off</td><td><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="pg" id="pg-inventory">
+    <div class="ph"><div class="phl"><h1>Inventory Management</h1><p>Products · Critical alerts · Supplier management · Barcode support · Expiry tracking</p></div><div class="phr"><button class="btn btnsm" onclick="toast('Barcode scanner opened','inf')"><i class="fa-solid fa-barcode"></i>Scan Barcode</button></div></div>
+    <div class="kg kg4" style="margin-bottom:9px">
+      <div class="kc" style="--kclr:var(--red)"><i class="fa-solid fa-triangle-exclamation kci"></i><div class="kcv">3</div><div class="kcl">Critical stock items</div><div class="kcd neg">Order needed</div></div>
+      <div class="kc" style="--kclr:var(--amber)"><i class="fa-solid fa-boxes-stacked kci"></i><div class="kcv">28</div><div class="kcl">Total product types</div><div class="kcd neu">2 expiring soon</div></div>
+      <div class="kc" style="--kclr:var(--cyan)"><i class="fa-solid fa-truck kci"></i><div class="kcv">4</div><div class="kcl">Active suppliers</div><div class="kcd">All active</div></div>
+      <div class="kc" style="--kclr:var(--violet)"><i class="fa-solid fa-dollar-sign kci"></i><div class="kcv">CA$2.4K</div><div class="kcl">Total stock value</div><div class="kcd">CA$380 sold this month</div></div>
+    </div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Critical Stock Alerts</div><span class="bdg br">3 items</span></div>
+        <div class="skw"><i class="fa-solid fa-triangle-exclamation"></i><div><div style="font-weight:600">Cuticle Oil — only 3 units left</div><div class="tdm" style="font-size:.7rem">Min. stock: 10 · Beauty Supply Co. · Weekly usage: 8 units</div></div><button class="btn btnsm" style="margin-left:auto;color:var(--pink);flex-shrink:0" onclick="toast('Order placed!','ok')">Order Now</button></div>
+        <div class="skw"><i class="fa-solid fa-triangle-exclamation"></i><div><div style="font-weight:600">Hand Cream Luxe — only 2 units left</div><div class="tdm" style="font-size:.7rem">Min. stock: 8 · Expiry: Aug 30, 2025 · Luxury Beauty</div></div><button class="btn btnsm" style="margin-left:auto;color:var(--pink);flex-shrink:0" onclick="toast('Order placed!','ok')">Order Now</button></div>
+        <div class="skw"><i class="fa-solid fa-triangle-exclamation"></i><div><div style="font-weight:600">Gel Top Coat — only 4 units left</div><div class="tdm" style="font-size:.7rem">Min. stock: 12 · Pro Nail Supply</div></div><button class="btn btnsm" style="margin-left:auto;color:var(--pink);flex-shrink:0" onclick="toast('Order placed!','ok')">Order Now</button></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Product List</div><button class="btn btnsm btnp" onclick="toast('Product added','ok')"><i class="fa-solid fa-plus"></i>Add</button></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Product</th><th>Stock</th><th>Min</th><th>Price</th><th>Expiry</th><th>Supplier</th></tr></thead><tbody>
+          <tr><td class="tds">OPI Nail Polish</td><td>42</td><td>10</td><td>CA$16</td><td class="tdm">—</td><td class="tdm">Beauty Supply</td></tr>
+          <tr><td class="tds">Cuticle Oil</td><td style="color:var(--red);font-weight:700">3 ⚠</td><td>10</td><td>CA$12</td><td class="tdm">—</td><td class="tdm">Beauty Supply</td></tr>
+          <tr><td class="tds">Nail File Set</td><td>60</td><td>15</td><td>CA$8</td><td class="tdm">—</td><td class="tdm">Pro Nail Supply</td></tr>
+          <tr><td class="tds">Gel Top Coat</td><td style="color:var(--amber);font-weight:700">4 !</td><td>12</td><td>CA$22</td><td class="tdm">—</td><td class="tdm">Pro Nail Supply</td></tr>
+          <tr><td class="tds">Hand Cream Luxe</td><td style="color:var(--red);font-weight:700">2 ⚠</td><td>8</td><td>CA$28</td><td style="color:var(--amber)">Aug 30</td><td class="tdm">Luxury Beauty</td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINANCE -->
+  <div class="pg" id="pg-finance">
+    <div class="ph"><div class="phl"><h1>Finance Management</h1><p>Revenue/Expense · Cash/Card split · EOD cash report · Commission · Tax report · Invoicing</p></div></div>
+    <div class="kg kg3" style="margin-bottom:9px">
+      <div class="kc" style="--kclr:var(--green)"><i class="fa-solid fa-arrow-trend-up kci"></i><div class="kcv">CA$18,400</div><div class="kcl">Total revenue this month</div><div class="kcd">↑ 18% vs last month</div></div>
+      <div class="kc" style="--kclr:var(--red)"><i class="fa-solid fa-arrow-trend-down kci"></i><div class="kcv">CA$7,800</div><div class="kcl">Total expenses this month</div><div class="kcd neg">Rent + Salaries + Stock</div></div>
+      <div class="kc" style="--kclr:var(--gold)"><i class="fa-solid fa-coins kci"></i><div class="kcv">CA$10,600</div><div class="kcl">Net profit</div><div class="kcd">58% net margin</div></div>
+    </div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">End of Day Cash Report</div><span class="bdg bg">June 15, 2025</span></div>
+        <div class="finrow"><span class="fincat">Cash payments</span><span class="finpos">CA$420</span></div>
+        <div class="finrow"><span class="fincat">Credit card payments</span><span class="finpos">CA$380</span></div>
+        <div class="finrow"><span class="fincat">Online payments</span><span class="finpos">CA$40</span></div>
+        <div class="finrow" style="font-weight:700;font-size:.88rem"><span>Total daily revenue</span><span class="finpos">CA$840</span></div>
+        <div class="sep"></div>
+        <div class="finrow"><span class="fincat">Staff commissions</span><span class="finneg">−CA$212</span></div>
+        <div class="finrow"><span class="fincat">Daily supply cost</span><span class="finneg">−CA$45</span></div>
+        <div class="finrow" style="font-weight:700;font-size:.88rem"><span>Daily net profit</span><span class="finpos">CA$583</span></div>
+        <div class="sep"></div>
+        <button class="btn btnsm btnp" onclick="toast('Preparing PDF...','inf')"><i class="fa-solid fa-file-pdf"></i>Download PDF Report</button>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Monthly Revenue / Expense Summary</div><span class="bdg ba">June 2025</span></div>
+        <div class="finrow"><span class="fincat"><i class="fa-solid fa-scissors" style="color:var(--pink)"></i> Service revenue</span><span class="finpos">CA$17,820</span></div>
+        <div class="finrow"><span class="fincat"><i class="fa-solid fa-box" style="color:var(--violet)"></i> Product sales</span><span class="finpos">CA$580</span></div>
+        <div class="finrow" style="font-weight:600"><span>TOTAL REVENUE</span><span class="finpos" style="font-size:.9rem">CA$18,400</span></div>
+        <div class="sep"></div>
+        <div class="finrow"><span class="fincat">Rent</span><span class="finneg">−CA$3,200</span></div>
+        <div class="finrow"><span class="fincat">Salaries & commissions</span><span class="finneg">−CA$2,530</span></div>
+        <div class="finrow"><span class="fincat">Stock & supplies</span><span class="finneg">−CA$840</span></div>
+        <div class="finrow"><span class="fincat">Marketing</span><span class="finneg">−CA$350</span></div>
+        <div class="finrow"><span class="fincat">Miscellaneous</span><span class="finneg">−CA$880</span></div>
+        <div class="sep"></div>
+        <div class="finrow" style="color:var(--amber);font-weight:600"><span>HST Tax estimate (13%)</span><span>CA$1,590</span></div>
+        <div class="finrow" style="font-weight:700;font-size:.9rem"><span>NET PROFIT</span><span class="finpos">CA$10,600</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- LOYALTY -->
+  <div class="pg" id="pg-loyalty">
+    <div class="ph"><div class="phl"><h1>Loyalty & Campaign System</h1><p>Points system · Gift vouchers · Coupon codes · Membership tiers · Referral program</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Membership Tiers</div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Tier</th><th>Min. Points</th><th>Members</th><th>Benefits</th></tr></thead><tbody>
+          <tr><td><span class="bdg bb">Standard</span></td><td>0</td><td>187</td><td>1 point per CA$1 spent</td></tr>
+          <tr><td><span class="bdg bv">Silver</span></td><td>500</td><td>22</td><td>1.5x points + 5% off + priority notifications</td></tr>
+          <tr><td><span class="bdg bgold">Gold</span></td><td>1,000</td><td>5</td><td>2x points + 10% off + priority booking</td></tr>
+          <tr><td><span class="bdg bp">Platinum</span></td><td>2,000</td><td>1</td><td>3x points + 15% off + exclusive hours</td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">Referral Program</div>
+        <div style="background:var(--s3);border-radius:var(--rxs);padding:9px;font-size:.8rem;line-height:1.6">
+          When a client refers a friend, they earn <span style="color:var(--green);font-weight:600">CA$15 credit</span>.<br>
+          The new client receives <span style="color:var(--pink);font-weight:600">10% off</span> their first visit.<br>
+          <span class="tdm">This month: 8 referrals → CA$120 in credits issued</span>
         </div>
-        <div style="display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap;align-items:center">
-          <button class="act-btn" style="background:var(--pink);border-color:var(--pink);color:#fff;padding:.35rem .75rem;font-size:.74rem" id="bf-all" onclick="filterBk('all',this)">All</button>
-          <button class="act-btn act-view" id="bf-pending" onclick="filterBk('pending',this)">Pending</button>
-          <button class="act-btn" style="background:var(--bcyan);border-color:rgba(76,201,240,.3);color:var(--cyan)" id="bf-confirmed" onclick="filterBk('confirmed',this)">Confirmed</button>
-          <button class="act-btn act-done" id="bf-completed" onclick="filterBk('completed',this)">Completed</button>
-          <button class="act-btn act-cancel" id="bf-cancelled" onclick="filterBk('cancelled',this)">Cancelled</button>
-          <input class="tb-search" id="bk-q" style="display:inline-block;width:200px;margin-left:.25rem" placeholder="Search client, service…">
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Coupon Codes & Gift Vouchers</div><button class="btn btnsm btnp" onclick="toast('Coupon created!','ok')"><i class="fa-solid fa-plus"></i>Create</button></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Usage</th><th>Expiry</th><th>Status</th></tr></thead><tbody>
+          <tr><td style="font-family:monospace;font-weight:600">SUMMER25</td><td><span class="bdg ba">Coupon</span></td><td>25% off</td><td>12/50</td><td>Aug 31</td><td><span class="st sd">Active</span></td></tr>
+          <tr><td style="font-family:monospace;font-weight:600">GC-0142</td><td><span class="bdg bp">Gift Voucher</span></td><td>CA$75</td><td>0/1</td><td>Dec 31</td><td><span class="st sp">Unused</span></td></tr>
+          <tr><td style="font-family:monospace;font-weight:600">BDAY10</td><td><span class="bdg bv">Birthday</span></td><td>10% off</td><td>Auto</td><td>No expiry</td><td><span class="st sd">Active</span></td></tr>
+          <tr><td style="font-family:monospace;font-weight:600">REF15</td><td><span class="bdg bg">Referral</span></td><td>CA$15 credit</td><td>8/∞</td><td>No expiry</td><td><span class="st sd">Active</span></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="pg" id="pg-marketing">
+    <div class="ph"><div class="phl"><h1>Marketing Tools</h1><p>SMS · Email · WhatsApp · Auto reminders · Birthday messages · Campaign announcements</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Send Bulk Message</div></div>
+        <div class="frow">
+          <div class="fg"><label class="flbl">Channel</label><select class="fsel"><option>WhatsApp</option><option>SMS</option><option>Email</option></select></div>
+          <div class="fg"><label class="flbl">Audience</label><select class="fsel"><option>All clients (215 people)</option><option>VIP clients (28 people)</option><option>Inactive 30+ days</option><option>Silver members (22 people)</option></select></div>
+        </div>
+        <div class="fg" style="margin-bottom:9px"><label class="flbl">Message</label><textarea class="finp" style="height:75px;resize:none">Hi {name}! 🌸 Our summer campaign has started at March Nails. 10% off all services! Book now: bit.ly/marchnails 💅</textarea></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn btnp" onclick="toast('Sent to 215 people!','ok')"><i class="fa-solid fa-paper-plane"></i>Send Now</button>
+          <button class="btn btnsm" onclick="toast('Preview ready','inf')">Preview</button>
+          <button class="btn btnsm" onclick="toast('Message scheduled','inf')"><i class="fa-solid fa-clock"></i>Schedule</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Automated Messages</div><span class="bdg bg">5 active</span></div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">Appointment reminder</div><div class="tdm" style="font-size:.7rem">1 day before via WhatsApp + SMS</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">Birthday message</div><div class="tdm" style="font-size:.7rem">Morning 9am SMS + 10% auto coupon</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">Win-back reminder</div><div class="tdm" style="font-size:.7rem">Clients inactive for 4+ weeks</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">Post-service review request</div><div class="tdm" style="font-size:.7rem">Auto SMS 2 hours after service</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">Acrylic refill reminder</div><div class="tdm" style="font-size:.7rem">SMS to acrylic clients every 3 weeks</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:.8rem;font-weight:500">VIP priority campaign alert</div><div class="tdm" style="font-size:.7rem">Send to VIPs before public launch</div></div><label class="sw"><input type="checkbox"><span class="swsl"></span></label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="pg" id="pg-reviews">
+    <div class="ph"><div class="phl"><h1>Reviews & Satisfaction</h1><p>Ratings · Complaint management · NPS score · Customer satisfaction reports</p></div><div class="phr"><button class="btn btnp btnsm" onclick="toast('Review request sent','ok')"><i class="fa-solid fa-paper-plane"></i>Request Review</button></div></div>
+    <div class="kg kg4" style="margin-bottom:9px">
+      <div class="kc" style="--kclr:var(--gold)"><i class="fa-solid fa-star kci"></i><div class="kcv">4.94</div><div class="kcl">Average rating</div><div class="kcd">553 total reviews</div></div>
+      <div class="kc" style="--kclr:var(--green)"><i class="fa-solid fa-thumbs-up kci"></i><div class="kcv">94%</div><div class="kcl">Satisfaction rate</div><div class="kcd">↑ 3% this month</div></div>
+      <div class="kc" style="--kclr:var(--red)"><i class="fa-solid fa-circle-exclamation kci"></i><div class="kcv">2</div><div class="kcl">Pending complaints</div><div class="kcd neg">Awaiting resolution</div></div>
+      <div class="kc" style="--kclr:var(--violet)"><i class="fa-solid fa-chart-bar kci"></i><div class="kcv">72</div><div class="kcl">NPS Score</div><div class="kcd">Excellent level</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Recent Reviews</div></div>
+      <div class="tw"><table class="tbl"><thead><tr><th>Client</th><th>Service</th><th>Staff</th><th>Rating</th><th>Review</th><th>Date</th><th>Actions</th></tr></thead><tbody>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">O</div>Olivia Chen</div></td><td>Pedicure Shellac</td><td>Daisy</td><td style="color:var(--gold)">⭐⭐⭐⭐⭐</td><td style="font-size:.73rem;max-width:170px">"Amazing service, Daisy did incredible work!"</td><td>Jun 10</td><td><button class="btn btnsm" onclick="toast('Reply sent','ok')">Reply</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">E</div>Emma Johnson</div></td><td>Acrylic Full Set</td><td>Happy</td><td style="color:var(--gold)">⭐⭐⭐⭐⭐</td><td style="font-size:.73rem;max-width:170px">"Happy is amazing! Love the result every time."</td><td>Jun 8</td><td><button class="btn btnsm" onclick="toast('Reply sent','ok')">Reply</button></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--cyan)">S</div>Sophie T.</div></td><td>Manicure Shellac</td><td>Hannah</td><td style="color:var(--amber)">⭐⭐⭐⭐</td><td style="font-size:.73rem;max-width:170px">"Great service, the wait time was a bit long."</td><td>Jun 7</td><td><div class="actrow"><button class="btn btnsm" onclick="toast('Reply sent','ok')">Reply</button><button class="btn btnsm btnd" onclick="toast('Complaint logged','inf')">Complaint</button></div></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <!-- WEBSITE -->
+  <div class="pg" id="pg-website">
+    <div class="ph"><div class="phl"><h1>Website Manager</h1><p>SEO status · Banner management · Gallery · Blog posts · FAQ · SEO settings</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">SEO Status</div><span class="bdg br">Needs optimization</span></div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:9px">
+          <div><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>Google rank: <span class="tdm">"nail salon Kanata"</span></span><span style="color:var(--red);font-weight:600">Page 3</span></div><div class="prog"><div class="pb" style="width:20%;background:var(--red)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>Page speed (PageSpeed)</span><span style="color:var(--amber);font-weight:600">62/100</span></div><div class="prog"><div class="pb" style="width:62%;background:var(--amber)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>Mobile compatibility</span><span style="color:var(--green);font-weight:600">88/100</span></div><div class="prog"><div class="pb" style="width:88%;background:var(--green)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span>Domain authority</span><span style="color:var(--red);font-weight:600">github.io (low)</span></div><div class="prog"><div class="pb" style="width:12%;background:var(--red)"></div></div></div>
+        </div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:7px">SEO Action List</div>
+        <div class="tdit" onclick="this.classList.toggle('done')"><div class="tdck"></div><div><div class="tdttl">Purchase marchnails.ca domain</div><div class="tddesc">Most critical step · ~CA$15/year</div></div></div>
+        <div class="tdit" onclick="this.classList.toggle('done')"><div class="tdck"></div><div><div class="tdttl">Write blog: "Best nail trends Ottawa 2025"</div><div class="tddesc">Critical for organic traffic</div></div></div>
+        <div class="tdit" onclick="this.classList.toggle('done')"><div class="tdck"></div><div><div class="tdttl">Link Google My Business to website</div><div class="tddesc">Add URL → improves Maps ranking directly</div></div></div>
+        <div class="tdit" onclick="this.classList.toggle('done')"><div class="tdck"></div><div><div class="tdttl">Create sitemap.xml and robots.txt</div><div class="tddesc">Required for Google indexing</div></div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Content Management</div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Section</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead><tbody>
+          <tr><td class="tds">Main Banner</td><td><span class="st sd">Live</span></td><td>2 days ago</td><td><button class="btn btnsm" onclick="toast('Editor opened','inf')">Edit</button></td></tr>
+          <tr><td class="tds">Service Gallery</td><td><span class="st sp">Missing photos</span></td><td>10 days ago</td><td><button class="btn btnsm" style="color:var(--pink)" onclick="toast('Uploader opened','inf')">Update</button></td></tr>
+          <tr><td class="tds">Blog</td><td><span class="st sx">0 posts</span></td><td>Never</td><td><button class="btn btnsm" style="color:var(--pink)" onclick="toast('Blog editor opened','inf')">Write</button></td></tr>
+          <tr><td class="tds">Campaign Section</td><td><span class="st sd">Live</span></td><td>Yesterday</td><td><button class="btn btnsm" onclick="toast('Editor opened','inf')">Edit</button></td></tr>
+          <tr><td class="tds">FAQ (4 questions)</td><td><span class="st sp">Can be updated</span></td><td>1 month ago</td><td><button class="btn btnsm" onclick="toast('FAQ editor opened','inf')">Add</button></td></tr>
+          <tr><td class="tds">SEO Meta Tags</td><td><span class="st sx">Missing</span></td><td>Never</td><td><button class="btn btnsm" style="color:var(--pink)" onclick="toast('SEO editor opened','inf')">Edit</button></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <div class="pg" id="pg-ai">
+    <div class="ph"><div class="phl"><h1>AI Assistant</h1><p>Revenue forecast · Campaign suggestions · Client segmentation · Chatbot · Peak hour prediction</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div><div class="ct">AI Chat Assistant</div><div class="cs">Knows all salon data · Instant analysis</div></div><span class="bdg bv">Active</span></div>
+        <div class="chatarea" id="chat-area">
+          <div class="aibub"><strong>Hello!</strong> I am your March Nails AI assistant. I can analyze your salon data, make forecasts, and give recommendations.<br><br>Try: <em>"revenue"</em>, <em>"campaign"</em>, <em>"inventory"</em>, <em>"staff"</em>, or <em>"reviews"</em></div>
+        </div>
+        <div class="chatinprow">
+          <input class="chatinp" id="chat-inp" placeholder="Ask a question..." onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="btn btnp btnsm" onclick="sendAI()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="card">
+          <div class="ch"><div class="ct">AI Revenue Forecast</div><span class="bdg bg">High confidence</span></div>
+          <div style="margin-bottom:7px"><div class="tdm" style="font-size:.7rem">Estimated revenue this week</div><div style="font-family:var(--fontd);font-size:1.3rem;font-weight:700;color:var(--green)">CA$4,200 – CA$4,600</div><div class="tdm" style="font-size:.68rem">Seasonal trend + 12-month data</div></div>
+          <div><div class="tdm" style="font-size:.7rem">July 2025 forecast</div><div style="font-family:var(--fontd);font-size:1.3rem;font-weight:700;color:var(--pink)">CA$19,500 – CA$22,000</div><div class="tdm" style="font-size:.68rem">Summer effect: +12% increase expected</div></div>
         </div>
         <div class="card">
-          <div class="tbl-wrap">
-            <table class="tbl"><thead><tr><th>#</th><th>Client</th><th>Service</th><th>Artist</th><th>Date & Time</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bk-tbody"></tbody></table>
-          </div>
+          <div class="ch"><div class="ct">AI Campaign Suggestions</div></div>
+          <div class="alert aa" style="cursor:pointer;margin-bottom:4px"><i class="fa-solid fa-lightbulb"></i><div class="alertbody"><strong>68% effective:</strong> Send "We miss you" campaign to 23 clients inactive 4+ weeks</div></div>
+          <div class="alert ab" style="cursor:pointer;margin-bottom:4px"><i class="fa-solid fa-gift"></i><div class="alertbody"><strong>High conversion:</strong> Rose Williams has birthday tomorrow — send 10% surprise offer</div></div>
+          <div class="alert ag" style="cursor:pointer"><i class="fa-solid fa-crown"></i><div class="alertbody"><strong>Upsell opportunity:</strong> 3 Silver members close to Gold — run incentive campaign</div></div>
         </div>
       </div>
-
-      <!-- ━━━━━ CALENDAR ━━━━━ -->
-      <div class="page" id="pg-calendar">
-        <div class="ph"><div class="ph-left"><h1>Calendar</h1><p>Monthly appointment overview</p></div></div>
-        <div class="card">
-          <div class="cal-hdr">
-            <button class="cal-nav" onclick="calMove(-1)">‹</button>
-            <div class="cal-title" id="cal-title"></div>
-            <button class="cal-nav" onclick="calMove(1)">›</button>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
+    </div>
+  </div>
+  <!-- REPORTS -->
+  <div class="pg" id="pg-reports">
+    <div class="ph"><div class="phl"><h1>Reports</h1><p>Combined report of all modules · Daily/Weekly/Monthly · Export options</p></div></div>
+    <div class="kg kg12" id="rep-kpis" style="margin-bottom:9px"></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Staff Revenue & Commission Report</div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Staff</th><th>Bookings</th><th>Revenue</th><th>Commission (25%)</th><th>Rating</th></tr></thead><tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">F</div>Flower</div></td><td>44</td><td style="color:var(--green);font-weight:600">CA$3,520</td><td style="color:var(--gold);font-weight:600">CA$880</td><td style="color:var(--gold)">5.0 ⭐</td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">H</div>Happy</div></td><td>48</td><td style="color:var(--green);font-weight:600">CA$3,200</td><td style="color:var(--gold);font-weight:600">CA$800</td><td style="color:var(--gold)">4.9 ⭐</td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--cyan)">D</div>Daisy</div></td><td>38</td><td style="color:var(--green);font-weight:600">CA$1,900</td><td style="color:var(--gold);font-weight:600">CA$475</td><td style="color:var(--gold)">4.8 ⭐</td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--gold)">H</div>Hannah</div></td><td>35</td><td style="color:var(--green);font-weight:600">CA$1,575</td><td style="color:var(--gold);font-weight:600">CA$394</td><td style="color:var(--gold)">4.9 ⭐</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Export Options</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Downloading Excel...','ok')"><i class="fa-solid fa-file-excel" style="color:var(--green)"></i>Monthly Revenue Report (.xlsx)</button>
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Preparing PDF...','ok')"><i class="fa-solid fa-file-pdf" style="color:var(--red)"></i>Tax Report (.pdf)</button>
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Preparing PDF...','ok')"><i class="fa-solid fa-file-pdf" style="color:var(--red)"></i>Commission Report (.pdf)</button>
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Downloading CSV...','ok')"><i class="fa-solid fa-file-csv" style="color:var(--cyan)"></i>Client List (.csv)</button>
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Downloading CSV...','ok')"><i class="fa-solid fa-file-csv" style="color:var(--cyan)"></i>All Appointments (.csv)</button>
+          <button class="btn" style="justify-content:flex-start" onclick="toast('Downloading CSV...','ok')"><i class="fa-solid fa-file-csv" style="color:var(--cyan)"></i>Inventory Report (.csv)</button>
         </div>
       </div>
+    </div>
+    <div class="gg g2">
+      <div class="card"><div class="ch"><div><div class="ct">Weekly Revenue Breakdown</div></div></div><div style="height:170px"><canvas id="c-week"></canvas></div></div>
+      <div class="card"><div class="ch"><div><div class="ct">Client Acquisition Trend</div><div class="cs">Last 12 months</div></div></div><div style="height:170px"><canvas id="c-acq"></canvas></div></div>
+    </div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div><div class="ct">Daily Revenue · This Week</div></div><span class="bdg bg">CA$3,420 total</span></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Day</th><th>Bookings</th><th>Revenue</th><th>Avg Ticket</th><th>vs Last Week</th></tr></thead><tbody>
+          <tr><td>Monday</td><td>8</td><td style="color:var(--green);font-weight:600">CA$420</td><td class="tdm">CA$52</td><td style="color:var(--green)">↑ CA$38</td></tr>
+          <tr><td>Tuesday</td><td>11</td><td style="color:var(--green);font-weight:600">CA$580</td><td class="tdm">CA$52</td><td style="color:var(--green)">↑ CA$65</td></tr>
+          <tr><td>Wednesday</td><td>7</td><td style="color:var(--green);font-weight:600">CA$340</td><td class="tdm">CA$48</td><td style="color:var(--red)">↓ CA$22</td></tr>
+          <tr><td>Thursday</td><td>13</td><td style="color:var(--green);font-weight:600">CA$690</td><td class="tdm">CA$53</td><td style="color:var(--green)">↑ CA$90</td></tr>
+          <tr><td>Friday</td><td>14</td><td style="color:var(--green);font-weight:600">CA$780</td><td class="tdm">CA$55</td><td style="color:var(--green)">↑ CA$110</td></tr>
+          <tr><td>Saturday</td><td>16</td><td style="color:var(--green);font-weight:600">CA$920</td><td class="tdm">CA$57</td><td style="color:var(--green)">↑ CA$145</td></tr>
+          <tr><td>Sunday</td><td>6</td><td style="color:var(--green);font-weight:600">CA$310</td><td class="tdm">CA$51</td><td style="color:var(--red)">↓ CA$15</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Service Revenue Report</div></div>
+        <div class="tw"><table class="tbl"><thead><tr><th>Service</th><th>Bookings</th><th>Revenue</th><th>Share</th></tr></thead><tbody>
+          <tr><td class="tds">Acrylic Refill</td><td>68</td><td style="color:var(--green);font-weight:600">CA$4,080</td><td><div class="prog" style="width:80px;display:inline-block"><div class="pb" style="width:100%;background:rgba(247,37,133,.8)"></div></div></td></tr>
+          <tr><td class="tds">Acrylic Full Set</td><td>52</td><td style="color:var(--green);font-weight:600">CA$3,900</td><td><div class="prog" style="width:80px;display:inline-block"><div class="pb" style="width:76%;background:rgba(114,9,183,.8)"></div></div></td></tr>
+          <tr><td class="tds">Gel-X Extensions</td><td>44</td><td style="color:var(--green);font-weight:600">CA$3,520</td><td><div class="prog" style="width:80px;display:inline-block"><div class="pb" style="width:65%;background:rgba(76,201,240,.8)"></div></div></td></tr>
+          <tr><td class="tds">Manicure Shellac</td><td>55</td><td style="color:var(--green);font-weight:600">CA$1,925</td><td><div class="prog" style="width:80px;display:inline-block"><div class="pb" style="width:47%;background:rgba(248,181,0,.8)"></div></div></td></tr>
+          <tr><td class="tds">Pedicure Shellac</td><td>38</td><td style="color:var(--green);font-weight:600">CA$1,900</td><td><div class="prog" style="width:80px;display:inline-block"><div class="pb" style="width:47%;background:rgba(6,214,160,.8)"></div></div></td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+  </div>
 
-      <!-- ━━━━━ TEAM ━━━━━ -->
-      <div class="page" id="pg-team">
-        <div class="ph"><div class="ph-left"><h1>Team</h1><p>Artist performance & revenue split</p></div></div>
-        <div class="staff-grid" id="staff-grid"></div>
-        <div class="card">
-          <div class="card-hdr"><div class="card-title">Artist Comparison</div><div class="card-sub">Bookings & revenue side by side</div></div>
-          <div class="cw-tall"><canvas id="c-team-cmp"></canvas></div>
+  <!-- SETTINGS -->
+  <div class="pg" id="pg-settings">
+    <div class="ph"><div class="phl"><h1>Management & Security</h1><p>Role-based access control · 2FA · Audit log · Transaction records · Integrations</p></div></div>
+    <div class="gg g2">
+      <div class="card">
+        <div class="ch"><div class="ct">User Roles & Permissions</div><button class="btn btnp btnsm" onclick="toast('User added','ok')"><i class="fa-solid fa-user-plus"></i>Add User</button></div>
+        <div class="tw" style="margin-bottom:11px"><table class="tbl"><thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Last Login</th></tr></thead><tbody>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">A</div>Admin</div></td><td><span class="bdg br">Admin</span></td><td>Full access to everything</td><td>Now</td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm" style="background:var(--violet)">M</div>Manager</div></td><td><span class="bdg bv">Manager</span></td><td>Everything except Finance</td><td>2 hrs ago</td></tr>
+          <tr><td><div style="display:flex;align-items:center;gap:4px"><div class="av avsm">H</div>Happy</div></td><td><span class="bdg bb">Staff</span></td><td>View appointments only</td><td>1 hr ago</td></tr>
+        </tbody></table></div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:9px">Security Settings</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">2FA Authentication</div><div class="tdm" style="font-size:.7rem">SMS or Authenticator App</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">Login records (audit log)</div><div class="tdm" style="font-size:.7rem">Log all user actions</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">Suspicious login alert</div><div class="tdm" style="font-size:.7rem">New device login → email alert</div></div><label class="sw"><input type="checkbox" checked><span class="swsl"></span></label></div>
+        </div>
+        <div class="sep"></div>
+        <div class="ct" style="margin-bottom:9px">Integrations</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">Supabase (Cloud DB)</div><div class="tdm" style="font-size:.7rem">Cross-device booking sync</div></div><span class="st sx">Not connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">Google Calendar</div><div class="tdm" style="font-size:.7rem">Appointment sync</div></div><span class="st sx">Not connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">Google Analytics 4</div><div class="tdm" style="font-size:.7rem">Website visitor tracking</div></div><span class="st sx">Not connected</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.8rem;font-weight:500">EmailJS</div><div class="tdm" style="font-size:.7rem">Booking notification emails</div></div><span class="st sx">Not connected</span></div>
         </div>
       </div>
-
-      <!-- ━━━━━ CUSTOMERS ━━━━━ -->
-      <div class="page" id="pg-customers">
-        <div class="ph"><div class="ph-left"><h1>Customers</h1><p>Acquisition, retention & lifetime value</p></div></div>
-        <div class="kpi-grid" id="cust-kpis" style="grid-template-columns:repeat(4,1fr)"></div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">New Client Acquisition</div><div class="card-sub">Per month</div></div>
-            <div class="cw"><canvas id="c-acquisition"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Top Clients by Spend</div><span class="card-badge badge-gold" style="background:rgba(248,181,0,.12);color:var(--gold);border:1px solid var(--bgold)">All time</span></div>
-            <div id="top-clients"></div>
-          </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Transaction History (Audit Log)</div></div>
+        <div class="tline">
+          <div class="tli"><div class="tldot" style="background:var(--violet)"><i class="fa-solid fa-calendar-plus" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Appointment created — MN-0163</div><div class="tlm">Emma Johnson · Admin · 5 min ago</div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--amber)"><i class="fa-solid fa-dollar-sign" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Price updated</div><div class="tlm">Pedicure Shellac CA$50 → CA$55 · Admin · 1 hr ago</div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--red)"><i class="fa-solid fa-xmark" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Appointment cancelled — MN-0158</div><div class="tlm">Manager · 2 hrs ago</div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--cyan)"><i class="fa-solid fa-box" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">Stock updated</div><div class="tlm">Cuticle Oil: 15 → 3 units · Admin · 3 hrs ago</div></div></div>
+          <div class="tli"><div class="tldot" style="background:var(--pink)"><i class="fa-solid fa-right-to-bracket" style="font-size:.55rem"></i></div><div class="tlb"><div class="tlttl">New login: Happy (iPhone)</div><div class="tlm">Kanata, ON · 4 hrs ago</div></div></div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- ━━━━━ REPORTS ━━━━━ -->
-      <div class="page" id="pg-reports">
-        <div class="ph"><div class="ph-left"><h1>Reports</h1><p>Detailed business intelligence & KPIs</p></div></div>
-        <!-- KPI Summary -->
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="card-hdr"><div><div class="card-title">KPI Dashboard — Current Month</div></div></div>
-          <div class="rep-kpi" id="kpi-rep"></div>
-        </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Daily Revenue · This Week</div></div><span class="card-badge badge-green">CA$3,420 total</span></div>
-            <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Day</th><th>Bookings</th><th>Revenue</th><th>Avg Ticket</th><th>vs Last Wk</th></tr></thead><tbody id="daily-tbody"></tbody></table></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div><div class="card-title">Service Revenue Report</div></div></div>
-            <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Service</th><th>Bk</th><th>Revenue</th><th>Share</th></tr></thead><tbody id="svc-tbody"></tbody></table></div>
-          </div>
-        </div>
-        <div class="g2">
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Cancelled & No-Shows</div><span class="card-badge badge-amber">Last 30 days</span></div>
-            <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Artist</th><th>Reason</th></tr></thead><tbody id="cancel-tbody"></tbody></table></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Artist Revenue Split</div></div>
-            <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Artist</th><th>Bk</th><th>Revenue</th><th>Commission</th><th>Rating</th></tr></thead><tbody id="artist-tbody"></tbody></table></div>
-          </div>
-        </div>
-        <!-- Product sales -->
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="card-hdr"><div><div class="card-title">Product Sales Report</div><div class="card-sub">Retail items sold at the salon</div></div><span class="card-badge badge-cyan">This month</span></div>
-          <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Product</th><th>Units Sold</th><th>Unit Price</th><th>Total</th><th>Stock</th></tr></thead><tbody id="prod-tbody"></tbody></table></div>
-        </div>
-      </div>
-
-      <!-- ━━━━━ HEATMAP ━━━━━ -->
-      <div class="page" id="pg-heatmap">
-        <div class="ph"><div class="ph-left"><h1>Peak Hours</h1><p>Optimize staffing — see exactly when clients book</p></div></div>
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="card-hdr"><div><div class="card-title">Booking Heatmap</div><div class="card-sub">Darker = more bookings · Hover for detail</div></div></div>
-          <div style="overflow-x:auto"><div class="hm-grid" id="hm-grid" style="min-width:480px"></div></div>
-          <div style="display:flex;align-items:center;gap:.4rem;margin-top:.65rem;font-size:.68rem;color:var(--text2)">
-            Low
-            <div style="display:flex;gap:2px">
-              <div style="width:12px;height:12px;border-radius:2px;background:rgba(114,9,183,.08)"></div>
-              <div style="width:12px;height:12px;border-radius:2px;background:rgba(114,9,183,.2)"></div>
-              <div style="width:12px;height:12px;border-radius:2px;background:rgba(247,37,133,.35)"></div>
-              <div style="width:12px;height:12px;border-radius:2px;background:rgba(247,37,133,.65)"></div>
-              <div style="width:12px;height:12px;border-radius:2px;background:rgba(247,37,133,.95)"></div>
-            </div>
-            High
-          </div>
-        </div>
-        <div class="g2">
-          <div class="card"><div class="card-hdr"><div class="card-title">Busiest Days of Week</div></div><div class="cw"><canvas id="c-busyday"></canvas></div></div>
-          <div class="card"><div class="card-hdr"><div class="card-title">Peak Hours Distribution</div></div><div class="cw"><canvas id="c-peakhour"></canvas></div></div>
-        </div>
-      </div>
-
-      <!-- ━━━━━ TODO ━━━━━ -->
-      <div class="page" id="pg-todo">
-        <div class="ph"><div class="ph-left"><h1>Priority To-Do</h1><p>Click any task to mark it done</p></div></div>
-        <div class="card" style="margin-bottom:.85rem">
-          <div class="todo-prog-row"><span id="todo-pct-lbl">0 / 0 complete</span><span id="todo-pct">0%</span></div>
-          <div class="prog"><div class="prog-bar" id="todo-bar" style="width:0%;background:var(--grad)"></div></div>
-        </div>
-        <div id="todo-list"></div>
-      </div>
-
-      <!-- ━━━━━ SETTINGS ━━━━━ -->
-      <div class="page" id="pg-settings">
-        <div class="ph"><div class="ph-left"><h1>Settings</h1><p>Configure your dashboard connections</p></div></div>
-        <div class="set-grid">
-          <div class="set-card full" style="border-color:rgba(6,214,160,.25)">
-            <div class="set-title">🗄️ Supabase — Cross-Device Booking Sync</div>
-            <div class="set-sub">Connect Supabase so bookings sync between all devices (phone, iPad, computer) in real time.</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem">
-              <div><label class="set-lbl">Project URL</label><input class="set-inp" id="sb-url" style="margin-bottom:0" placeholder="https://xxxx.supabase.co"></div>
-              <div><label class="set-lbl">Anon Key</label><input class="set-inp" id="sb-key" style="margin-bottom:0" placeholder="eyJhbGci…"></div>
-            </div>
-            <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-              <button class="set-btn" style="background:linear-gradient(135deg,#06D6A0,#059669)" onclick="saveSB()">Save & Connect</button>
-              <button class="set-btn" style="background:transparent;border:1px solid var(--bgreen);color:var(--green);padding:.48rem 1.1rem" onclick="testSB()">Test Connection</button>
-              <span id="sb-status" style="font-size:.75rem"></span>
-            </div>
-          </div>
-          <div class="set-card full">
-            <div class="set-title">📧 EmailJS — Booking Notification Emails</div>
-            <div class="set-sub">Get an email every time a client books. Free tier available at emailjs.com</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin-bottom:.7rem">
-              <div><label class="set-lbl">Public Key</label><input class="set-inp" id="ejs-pub" style="margin-bottom:0" placeholder="user_xxxxx"></div>
-              <div><label class="set-lbl">Service ID</label><input class="set-inp" id="ejs-svc" style="margin-bottom:0" placeholder="service_xxx"></div>
-              <div><label class="set-lbl">Template ID</label><input class="set-inp" id="ejs-tpl" style="margin-bottom:0" placeholder="template_xxx"></div>
-            </div>
-            <button class="set-btn" onclick="saveEJS()">Save EmailJS Settings</button>
-          </div>
-          <div class="set-card">
-            <div class="set-title">🔒 Change Password</div>
-            <label class="set-lbl" style="margin-top:.75rem;display:block">New Password</label>
-            <input class="set-inp" id="pw-new" type="password" placeholder="Min 8 characters">
-            <label class="set-lbl">Confirm Password</label>
-            <input class="set-inp" id="pw-con" type="password" placeholder="Repeat password">
-            <button class="set-btn" onclick="changePW()">Update Password</button>
-          </div>
-          <div class="set-card">
-            <div class="set-title">🏪 Salon Info</div>
-            <label class="set-lbl" style="margin-top:.75rem;display:block">Salon Name</label>
-            <input class="set-inp" value="March Nails Ottawa">
-            <label class="set-lbl">Phone</label>
-            <input class="set-inp" value="613-592-7556">
-            <label class="set-lbl">Address</label>
-            <input class="set-inp" style="margin-bottom:0" value="700 March Road, Kanata, ON K2K 2V9">
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /pages -->
-  </div><!-- /main -->
+  </div><!-- /pages -->
+</div><!-- /main -->
 </div><!-- /app -->
-
 <div id="toast"></div>
-<div class="modal-bg" id="bk-modal"><div class="modal" id="bk-modal-body"></div></div>
-
 <script>
 'use strict';
-/*═══════════════ SEED DATA ═══════════════*/
-const ARTISTS=[
-  {name:'Happy',  spec:'Acrylic & Nail Art',    bk:48,rev:3200,rating:4.9,clr:'#F72585'},
-  {name:'Flower', spec:'Gel Extensions & Ombré', bk:44,rev:3520,rating:5.0,clr:'#7209B7'},
-  {name:'Daisy',  spec:'Shellac & Chrome',       bk:38,rev:1900,rating:4.8,clr:'#4CC9F0'},
-  {name:'Hannah', spec:'Pedicure Specialist',    bk:35,rev:1575,rating:4.9,clr:'#F8B500'},
-];
-const SERVICES=[
-  {n:'Acrylic Full Set',    p:75, c:52,clr:'rgba(247,37,133,.8)'},
-  {n:'Gel-X Extensions',   p:80, c:44,clr:'rgba(114,9,183,.8)'},
-  {n:'Acrylic Refill',     p:60, c:68,clr:'rgba(76,201,240,.8)'},
-  {n:'Pedicure Shellac',   p:55, c:38,clr:'rgba(248,181,0,.8)'},
-  {n:'Manicure Shellac',   p:35, c:55,clr:'rgba(6,214,160,.8)'},
-  {n:'Dip Powder',         p:50, c:30,clr:'rgba(251,133,0,.8)'},
-  {n:'Classic Pedicure',   p:43, c:25,clr:'rgba(239,35,60,.8)'},
-  {n:'Lash Extensions',    p:89, c:18,clr:'rgba(116,72,244,.8)'},
-];
-const PRODUCTS=[
-  {n:'OPI Nail Polish',    price:16,sold:28,stock:42},
-  {n:'Cuticle Oil',        price:12,sold:35,stock:18},
-  {n:'Nail File Set',      price:8, sold:22,stock:60},
-  {n:'Gel Top Coat',       price:22,sold:15,stock:30},
-  {n:'Hand Cream Luxe',    price:28,sold:19,stock:12},
-];
-const MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const TITLES={
+  dash:'Dashboard',notif:'Notification Center',appt:'Appointment Management',
+  crm:'Customer Management (CRM)',staff:'Staff Management',services:'Service Management',
+  inventory:'Inventory Management',finance:'Finance Management',loyalty:'Loyalty & Campaigns',
+  marketing:'Marketing Tools',reviews:'Reviews & Satisfaction',website:'Website Manager',
+  ai:'AI Assistant',reports:'Reports',settings:'Management & Security'
+};
+let PW = localStorage.getItem('mn_pw') || 'admin123';
 
-function mkBookings(n=130){
-  const arr=[];
-  const FN=['Emma','Sophie','Olivia','Sarah','Lily','Chloe','Ava','Mia','Grace','Zoe','Isabelle','Charlotte','Natalie','Victoria','Ella','Rose','Jade','Luna','Aria','Nora'];
-  const LN=['Johnson','Tremblay','Chen','Mitchell','Park','Martin','Williams','Brown','Davis','Wilson','Dubois','Thompson','Anderson','Taylor','Moore'];
-  const STS=['confirmed','confirmed','confirmed','pending','pending','completed','completed','completed','completed','cancelled'];
-  const HRS=[9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18];
-  const now=new Date();
-  for(let i=0;i<n;i++){
-    const d=new Date(now-Math.random()*35*864e5);
-    const fn=FN[i%FN.length],ln=LN[i%LN.length];
-    const svc=SERVICES[Math.floor(Math.random()*SERVICES.length)];
-    const art=ARTISTS[Math.floor(Math.random()*ARTISTS.length)];
-    const h=HRS[Math.floor(Math.random()*HRS.length)];
-    const ts=`${Math.floor(h)}:${h%1?'30':'00'} ${h<12?'AM':h>=12?'PM':'AM'}`;
-    arr.push({
-      id:'MN-'+String(i+1).padStart(4,'0'),
-      status:STS[Math.floor(Math.random()*STS.length)],
-      createdAt:d.toISOString(),
-      client:{fn,ln,ph:`(613)555-${1000+i}`,em:`${fn.toLowerCase()}@email.com`},
-      svc:{n:svc.n,p:`CA$${svc.p}`,dur:'60 min'},
-      artist:art.name,
-      date:d.toISOString().split('T')[0],
-      dateD:d.toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'}),
-      time:ts,notes:'',
-    });
-  }
-  return arr.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
-}
-function getBK(){let b=[];try{b=JSON.parse(localStorage.getItem('mn_bk')||'[]')}catch(e){}if(!b.length){b=mkBookings(130);localStorage.setItem('mn_bk',JSON.stringify(b))}return b;}
-function saveBK(a){localStorage.setItem('mn_bk',JSON.stringify(a));}
-function pp(s){return s?parseInt(s.replace(/\D/g,''))||0:0;}
-
-/*═══════════════ AUTH ═══════════════*/
-let PW=localStorage.getItem('mn_pw')||'admin123';
-function doLogin(){
-  const e=document.getElementById('l-em').value,p=document.getElementById('l-pw').value;
-  if(e==='admin@admin.com'&&p===PW){
-    document.getElementById('login').style.display='none';
-    document.getElementById('app').style.display='flex';
+function doLogin() {
+  var e = document.getElementById('l-em').value;
+  var p = document.getElementById('l-pw').value;
+  if (e === 'admin@admin.com' && p === PW) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
     boot();
-  } else document.getElementById('l-err').style.display='block';
-}
-document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-function doLogout(){document.getElementById('login').style.display='flex';document.getElementById('app').style.display='none';}
-function changePW(){
-  const n=document.getElementById('pw-new').value,c=document.getElementById('pw-con').value;
-  if(n.length<8){toast('Password must be at least 8 characters','err');return;}
-  if(n!==c){toast('Passwords do not match','err');return;}
-  PW=n;localStorage.setItem('mn_pw',n);toast('Password updated ✓','ok');
-}
-
-/*═══════════════ NAV ═══════════════*/
-const PAGE_NAMES={dashboard:'Dashboard',analytics:'Analytics',bookings:'Bookings',calendar:'Calendar',team:'Team',customers:'Customers',reports:'Reports',heatmap:'Peak Hours',todo:'To-Do',settings:'Settings'};
-function showPage(p){
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.getElementById('pg-'+p)?.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-  document.querySelector(`[data-p="${p}"]`)?.classList.add('active');
-  document.getElementById('tb-title').textContent=PAGE_NAMES[p]||p;
-  if(p==='analytics')initAnalytics();
-  if(p==='calendar')renderCal();
-  if(p==='team')renderTeam();
-  if(p==='customers')renderCust();
-  if(p==='reports')renderReports();
-  if(p==='heatmap')renderHeatmap();
-  if(p==='todo')renderTodo();
-  if(window.innerWidth<980)document.getElementById('sidebar').classList.remove('open');
-}
-document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',()=>showPage(el.dataset.p)));
-function toggleSB(){document.getElementById('sidebar').classList.toggle('open');}
-
-/*═══════════════ PERIOD ═══════════════*/
-let period='day';
-function setPeriod(p,btn){period=p;btn.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderKPIs();initDashCharts();}
-
-/*═══════════════ BOOT ═══════════════*/
-let CH={};
-function boot(){
-  clock();setInterval(clock,60000);
-  renderKPIs();initDashCharts();renderRecent();renderSvcRank();
-  renderBkTable();renderTodo();updateBadges();loadKeys();
-}
-function clock(){
-  const n=new Date(),g=n.getHours()<12?'Good morning':'Good afternoon';
-  document.getElementById('dash-greeting').textContent=g+' ✦';
-  const ds=n.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-  document.getElementById('dash-date').textContent=ds;
-  document.getElementById('tb-date').textContent=ds;
-  document.getElementById('tb-date2').textContent=n.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
-}
-
-/*═══════════════ KPIs ═══════════════*/
-function renderKPIs(){
-  const bk=getBK(),today=new Date().toISOString().split('T')[0];
-  const todayBk=bk.filter(b=>b.date===today);
-  const monthPfx=new Date().toISOString().slice(0,7);
-  const monthBk=bk.filter(b=>b.date?.startsWith(monthPfx));
-  const pending=bk.filter(b=>b.status==='pending');
-  const upcoming=bk.filter(b=>b.date>=today&&b.status==='confirmed');
-  const todayRev=todayBk.filter(b=>b.status!=='cancelled').reduce((s,b)=>s+pp(b.svc?.p),0);
-  const monthRev=monthBk.filter(b=>b.status!=='cancelled').reduce((s,b)=>s+pp(b.svc?.p),0);
-  const clients=new Set(bk.map(b=>b.client?.em)).size;
-  const kpis=[
-    {icon:'📅',lbl:"Today's Bookings",val:todayBk.length,delta:'↑ 3 vs yesterday',dir:'up',ib:'rgba(247,37,133,.2)',tl:'var(--grad)'},
-    {icon:'💰',lbl:"Today's Revenue",val:`CA$${todayRev}`,delta:'↑ CA$42 vs yesterday',dir:'up',ib:'rgba(6,214,160,.15)',tl:'linear-gradient(90deg,var(--green),var(--cyan))'},
-    {icon:'📊',lbl:'Monthly Revenue',val:`CA$${(monthRev/1000).toFixed(1)}K`,delta:'↑ 18% vs last month',dir:'up',ib:'rgba(114,9,183,.2)',tl:'var(--grad3)'},
-    {icon:'👥',lbl:'Active Clients',val:clients,delta:'↑ 12 this month',dir:'up',ib:'rgba(76,201,240,.15)',tl:'linear-gradient(90deg,var(--cyan),var(--violet))'},
-    {icon:'⏳',lbl:'Pending Bookings',val:pending.length,delta:pending.length+' awaiting confirm',dir:'neu',ib:'rgba(251,133,0,.15)',tl:'linear-gradient(90deg,var(--amber),var(--gold))'},
-    {icon:'🔜',lbl:'Upcoming Today',val:upcoming.filter(b=>b.date===today).length,delta:'Next: 2:00 PM Happy',dir:'up',ib:'rgba(247,37,133,.15)',tl:'var(--grad2)'},
-  ];
-  document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
-    <div class="kpi">
-      <div class="kpi-top-line" style="background:${k.tl}"></div>
-      <div class="kpi-icon" style="background:${k.ib}">${k.icon}</div>
-      <div class="kpi-value">${k.val}</div>
-      <div class="kpi-label">${k.lbl}</div>
-      <div class="kpi-delta ${k.dir==='up'?'delta-up':k.dir==='down'?'delta-down':'delta-neu'}">${k.delta}</div>
-    </div>`).join('');
-}
-function updateBadges(){
-  const bk=getBK(),cnt=bk.filter(b=>b.status==='pending').length;
-  const np=document.getElementById('nb-pending');if(np){np.textContent=cnt;np.style.display=cnt?'':'none';}
-}
-
-/*═══════════════ CHART HELPERS ═══════════════*/
-const BASE={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,3,24,.95)',titleColor:'#EDE9F6',bodyColor:'#8B7AB8',borderColor:'rgba(114,9,183,.3)',borderWidth:1,padding:10,cornerRadius:8}},scales:{x:{grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580',font:{size:10}}},y:{grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580',font:{size:10}}}}};
-function mkC(id,type,labels,datasets,extra={}){
-  const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;
-  if(CH[id])CH[id].destroy();
-  const cfg=JSON.parse(JSON.stringify(BASE));
-  if(['doughnut','pie','polarArea'].includes(type)){delete cfg.scales;cfg.plugins.legend={display:true,position:'right',labels:{color:'#8B7AB8',boxWidth:10,padding:8,font:{size:10}}};}
-  CH[id]=new Chart(ctx,{type,data:{labels,datasets},options:{...cfg,...extra}});
-}
-function mkGrad(ctx,c1,c2,h=220){const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,c1);g.addColorStop(1,c2);return g;}
-
-/*═══════════════ DASHBOARD CHARTS ═══════════════*/
-function initDashCharts(){
-  // Revenue bar
-  const rCtx=document.getElementById('c-rev-week')?.getContext('2d');
-  if(rCtx){if(CH['c-rev-week'])CH['c-rev-week'].destroy();const g=mkGrad(rCtx,'rgba(247,37,133,.9)','rgba(114,9,183,.3)');mkC('c-rev-week','bar',DAYS,[{data:[420,580,340,690,780,920,310],backgroundColor:g,borderRadius:7,borderSkipped:false}]);}
-  // Status doughnut
-  const bk=getBK(),sc={confirmed:0,pending:0,completed:0,cancelled:0};
-  bk.forEach(b=>{if(sc[b.status]!==undefined)sc[b.status]++;});
-  mkC('c-status','doughnut',['Confirmed','Pending','Completed','Cancelled'],[{data:Object.values(sc),backgroundColor:['rgba(76,201,240,.85)','rgba(251,133,0,.85)','rgba(6,214,160,.85)','rgba(239,35,60,.85)'],borderWidth:0,hoverOffset:5}]);
-  // Top services bar (horizontal)
-  const top=SERVICES.slice(0,5);
-  mkC('c-top-svc','bar',top.map(s=>s.n.split(' ')[0]),[{data:top.map(s=>s.p*s.c),backgroundColor:top.map(s=>s.clr),borderRadius:5,borderSkipped:false}],{indexAxis:'y'});
-  // Artists polar
-  mkC('c-artists','polarArea',ARTISTS.map(a=>a.name),[{data:ARTISTS.map(a=>a.bk),backgroundColor:ARTISTS.map(a=>a.clr+'CC'),borderWidth:0}]);
-}
-
-/*═══════════════ ANALYTICS CHARTS ═══════════════*/
-function initAnalytics(){
-  // KPI bar
-  const ankpis=[{icon:'💰',lbl:'Monthly Rev',val:'CA$18.4K'},{icon:'📅',lbl:'Bookings',val:'163'},{icon:'❌',lbl:'Cancel Rate',val:'11.6%'},{icon:'🔁',lbl:'Retention',val:'68%'},{icon:'💵',lbl:'Avg Ticket',val:'CA$62'},{icon:'⭐',lbl:'Rating',val:'4.94'},{icon:'🆕',lbl:'New Clients',val:'32'},{icon:'💎',lbl:'LTV',val:'CA$341'}];
-  document.getElementById('an-kpis').innerHTML=ankpis.map(k=>`<div class="rk"><div class="rk-icon">${k.icon}</div><div class="rk-val">${k.val}</div><div class="rk-lbl">${k.lbl}</div></div>`).join('');
-  // Monthly revenue line
-  const mrCtx=document.getElementById('c-monthly-rev')?.getContext('2d');
-  if(mrCtx){if(CH['c-monthly-rev'])CH['c-monthly-rev'].destroy();const g=mkGrad(mrCtx,'rgba(247,37,133,.25)','rgba(247,37,133,.01)',265);mkC('c-monthly-rev','line',MOS,[{data:[9200,10800,11200,12400,13100,14800,15200,16100,17400,15900,18400,19200],borderColor:'#F72585',backgroundColor:g,fill:true,tension:.4,pointBackgroundColor:'#F72585',pointRadius:4,pointHoverRadius:6}]);}
-  // Monthly bookings bar
-  const mbCtx=document.getElementById('c-monthly-bk')?.getContext('2d');
-  if(mbCtx){if(CH['c-monthly-bk'])CH['c-monthly-bk'].destroy();const g=mkGrad(mbCtx,'rgba(114,9,183,.8)','rgba(114,9,183,.15)',265);mkC('c-monthly-bk','bar',MOS,[{data:[92,108,112,124,131,148,152,161,174,159,163,192],backgroundColor:g,borderRadius:5,borderSkipped:false}]);}
-  // Service doughnut
-  mkC('c-svc-pie','doughnut',SERVICES.map(s=>s.n),[{data:SERVICES.map(s=>s.p*s.c),backgroundColor:SERVICES.map(s=>s.clr),borderWidth:0}]);
-  // Retention stacked
-  mkC('c-retention','bar',MOS.slice(6),[{label:'New',data:[32,28,35,41,38,44],backgroundColor:'rgba(76,201,240,.8)',borderRadius:4,borderSkipped:false},{label:'Returning',data:[68,72,65,59,62,56],backgroundColor:'rgba(6,214,160,.7)',borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:true,labels:{color:'#8B7AB8',font:{size:10}}}},scales:{x:{stacked:true,grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580'}},y:{stacked:true,grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580'}}}});
-  // Cancel line
-  const ccCtx=document.getElementById('c-cancel')?.getContext('2d');
-  if(ccCtx){if(CH['c-cancel'])CH['c-cancel'].destroy();const g=mkGrad(ccCtx,'rgba(239,35,60,.2)','rgba(239,35,60,.01)');mkC('c-cancel','line',MOS,[{data:[14,12,15,11,9,13,11,10,12,14,9,11],borderColor:'#EF233C',backgroundColor:g,fill:true,tension:.4,pointBackgroundColor:'#EF233C',pointRadius:4}]);}
-  // Avg ticket
-  const atCtx=document.getElementById('c-ticket')?.getContext('2d');
-  if(atCtx){if(CH['c-ticket'])CH['c-ticket'].destroy();const g=mkGrad(atCtx,'rgba(248,181,0,.2)','rgba(248,181,0,.01)');mkC('c-ticket','line',MOS,[{data:[54,56,58,59,61,60,63,62,65,64,62,66],borderColor:'#F8B500',backgroundColor:g,fill:true,tension:.4,pointBackgroundColor:'#F8B500',pointRadius:4}]);}
-  // P&L
-  mkC('c-pnl','bar',['Jul','Aug','Sep','Oct','Nov','Dec'],[{label:'Revenue',data:[14800,15200,16100,17400,15900,18400],backgroundColor:'rgba(6,214,160,.75)',borderRadius:4,borderSkipped:false},{label:'Expenses',data:[5900,6200,6400,7100,6300,7800],backgroundColor:'rgba(239,35,60,.6)',borderRadius:4,borderSkipped:false},{label:'Net',data:[8900,9000,9700,10300,9600,10600],backgroundColor:'rgba(247,37,133,.85)',borderRadius:4,borderSkipped:false}],{plugins:{legend:{display:true,labels:{color:'#8B7AB8',font:{size:10}}}}});
-  // Branch (single branch placeholder)
-  mkC('c-branch','bar',['Kanata HQ'],[{label:'Revenue',data:[18400],backgroundColor:'rgba(247,37,133,.8)',borderRadius:6},{label:'Bookings',data:[163],backgroundColor:'rgba(76,201,240,.7)',borderRadius:6}],{plugins:{legend:{display:true,labels:{color:'#8B7AB8',font:{size:10}}}}});
-}
-
-/*═══════════════ RECENT TABLE ═══════════════*/
-function renderRecent(){
-  const bk=getBK().slice(0,8);
-  const scls={confirmed:'s-confirmed',pending:'s-pending',completed:'s-completed',cancelled:'s-cancelled'};
-  document.getElementById('recent-tbody').innerHTML=bk.map(b=>`
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:.5rem"><div class="av av-sm">${b.client.fn[0]}</div><span class="td-strong">${b.client.fn} ${b.client.ln}</span></div></td>
-      <td>${b.svc.n}</td><td class="td-muted">${b.artist}</td>
-      <td class="td-muted" style="white-space:nowrap">${b.dateD}</td>
-      <td><span class="status ${scls[b.status]||''}">${b.status}</span></td>
-    </tr>`).join('');
-}
-
-/*═══════════════ SERVICE RANK ═══════════════*/
-function renderSvcRank(){
-  const max=Math.max(...SERVICES.map(s=>s.p*s.c));
-  document.getElementById('svc-rank').innerHTML=SERVICES.slice(0,6).map((s,i)=>`
-    <div class="rank-item">
-      <div class="rank-n ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
-      <div class="rank-body">
-        <div class="rank-name">${s.n}</div>
-        <div class="rank-meta">${s.c} bookings</div>
-        <div class="prog"><div class="prog-bar" style="width:${(s.p*s.c/max*100).toFixed(0)}%;background:${s.clr}"></div></div>
-      </div>
-      <div class="rank-val">CA$${(s.p*s.c).toLocaleString()}</div>
-    </div>`).join('');
-}
-
-/*═══════════════ BOOKING TABLE ═══════════════*/
-let bkFilter='all',bkQ='';
-document.getElementById('bk-q').addEventListener('input',e=>{bkQ=e.target.value.toLowerCase();renderBkTable();});
-function filterBk(f,btn){bkFilter=f;document.querySelectorAll('[id^=bf-]').forEach(b=>b.style.background='');btn.style.opacity='1';renderBkTable();}
-function renderBkTable(){
-  const bk=getBK();
-  const scls={confirmed:'s-confirmed',pending:'s-pending',completed:'s-completed',cancelled:'s-cancelled'};
-  const filtered=bk.filter(b=>{
-    if(bkFilter!=='all'&&b.status!==bkFilter)return false;
-    if(bkQ){const q=`${b.client.fn} ${b.client.ln} ${b.svc.n} ${b.artist}`.toLowerCase();if(!q.includes(bkQ))return false;}
-    return true;
-  });
-  document.getElementById('bk-tbody').innerHTML=filtered.slice(0,40).map(b=>`
-    <tr>
-      <td class="td-muted td-mono">${b.id}</td>
-      <td><div style="display:flex;align-items:center;gap:.5rem"><div class="av av-sm">${b.client.fn[0]}</div><div><div class="td-strong">${b.client.fn} ${b.client.ln}</div><div class="td-muted" style="font-size:.68rem">${b.client.ph}</div></div></div></td>
-      <td>${b.svc.n}<div class="td-muted" style="font-size:.68rem">${b.svc.dur}</div></td>
-      <td class="td-muted">${b.artist}</td>
-      <td class="td-muted" style="white-space:nowrap">${b.dateD}<div style="font-size:.7rem">${b.time}</div></td>
-      <td style="font-weight:700;color:var(--gold)">${b.svc.p}</td>
-      <td><span class="status ${scls[b.status]||''}">${b.status}</span></td>
-      <td>
-        <div style="display:flex;gap:.25rem;flex-wrap:wrap">
-          ${b.status==='pending'?`<button class="act-btn act-confirm" onclick="updBk('${b.id}','confirmed')">✓ Confirm</button>`:''}
-          ${b.status==='confirmed'?`<button class="act-btn act-done" onclick="updBk('${b.id}','completed')">Done</button>`:''}
-          ${b.status!=='cancelled'&&b.status!=='completed'?`<button class="act-btn act-cancel" onclick="updBk('${b.id}','cancelled')">✕</button>`:''}
-          <button class="act-btn act-view" onclick="viewBk('${b.id}')">View</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
-function updBk(id,status){
-  const bk=getBK(),i=bk.findIndex(b=>b.id===id);
-  if(i>-1){bk[i].status=status;saveBK(bk);}
-  renderBkTable();renderRecent();renderKPIs();updateBadges();
-  const m={confirmed:'✅ Booking confirmed',cancelled:'🚫 Booking cancelled',completed:'🎉 Marked as complete'};
-  toast(m[status]||'Updated',status==='cancelled'?'err':'ok');
-}
-function viewBk(id){
-  const b=getBK().find(x=>x.id===id);if(!b)return;
-  const scls={confirmed:'s-confirmed',pending:'s-pending',completed:'s-completed',cancelled:'s-cancelled'};
-  document.getElementById('bk-modal-body').innerHTML=`
-    <div class="modal-top"><div class="modal-ttl">Booking · ${b.id}</div><div class="modal-x" onclick="closeMod()">✕</div></div>
-    <div class="modal-row">
-      <div class="modal-field"><div class="fl">Client</div><div class="fv">${b.client.fn} ${b.client.ln}</div></div>
-      <div class="modal-field"><div class="fl">Status</div><span class="status ${scls[b.status]}">${b.status}</span></div>
-      <div class="modal-field"><div class="fl">Phone</div><div class="fv">${b.client.ph}</div></div>
-      <div class="modal-field"><div class="fl">Email</div><div class="fv" style="font-size:.78rem">${b.client.em}</div></div>
-      <div class="modal-field"><div class="fl">Service</div><div class="fv">${b.svc.n}</div></div>
-      <div class="modal-field"><div class="fl">Price</div><div class="fv" style="color:var(--gold);font-weight:700">${b.svc.p}</div></div>
-      <div class="modal-field"><div class="fl">Artist</div><div class="fv">${b.artist}</div></div>
-      <div class="modal-field"><div class="fl">Duration</div><div class="fv">${b.svc.dur}</div></div>
-      <div class="modal-field"><div class="fl">Date</div><div class="fv">${b.dateD}</div></div>
-      <div class="modal-field"><div class="fl">Time</div><div class="fv">${b.time}</div></div>
-    </div>
-    <div class="modal-actions">
-      ${b.status==='pending'?`<button class="act-btn act-confirm" style="padding:.4rem .9rem;font-size:.78rem" onclick="updBk('${b.id}','confirmed');closeMod()">✓ Confirm</button>`:''}
-      ${b.status==='confirmed'?`<button class="act-btn act-done" style="padding:.4rem .9rem;font-size:.78rem" onclick="updBk('${b.id}','completed');closeMod()">Mark Complete</button>`:''}
-      ${b.status!=='cancelled'?`<button class="act-btn act-cancel" style="padding:.4rem .9rem;font-size:.78rem" onclick="updBk('${b.id}','cancelled');closeMod()">Cancel Booking</button>`:''}
-    </div>`;
-  document.getElementById('bk-modal').classList.add('open');
-}
-function closeMod(){document.getElementById('bk-modal').classList.remove('open');}
-document.getElementById('bk-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMod();});
-
-/*═══════════════ CALENDAR ═══════════════*/
-let calD=new Date();
-function calMove(d){calD=new Date(calD.getFullYear(),calD.getMonth()+d,1);renderCal();}
-function renderCal(){
-  const bk=getBK(),y=calD.getFullYear(),m=calD.getMonth();
-  document.getElementById('cal-title').textContent=new Date(y,m,1).toLocaleDateString('en-CA',{month:'long',year:'numeric'});
-  const first=new Date(y,m,1).getDay()||7,days=new Date(y,m+1,0).getDate(),today=new Date().toISOString().split('T')[0];
-  let h='';
-  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d=>h+=`<div class="cal-dh">${d}</div>`);
-  for(let i=1;i<first;i++)h+=`<div class="cal-cell other"></div>`;
-  for(let d=1;d<=days;d++){
-    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const db=bk.filter(b=>b.date===ds&&b.status!=='cancelled');
-    h+=`<div class="cal-cell${ds===today?' today':''}">
-      <div class="cal-dn">${d}</div>
-      ${db.slice(0,3).map(b=>`<div class="cal-ev${b.status==='completed'?' done':''}">${b.time.split(':')[0]} ${b.artist}</div>`).join('')}
-      ${db.length>3?`<div style="font-size:.56rem;color:var(--text3)">+${db.length-3}</div>`:''}
-    </div>`;
+  } else {
+    document.getElementById('l-err').style.display = 'block';
   }
-  document.getElementById('cal-grid').innerHTML=h;
+}
+document.getElementById('l-pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+function doLogout() {
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 }
 
-/*═══════════════ TEAM ═══════════════*/
-function renderTeam(){
-  const bk=getBK();
-  document.getElementById('staff-grid').innerHTML=ARTISTS.map(a=>{
-    const ab=bk.filter(b=>b.artist===a.name),rev=ab.reduce((s,b)=>s+pp(b.svc?.p),0),done=ab.filter(b=>b.status==='completed').length;
-    return `<div class="s-card">
-      <div class="s-card-av" style="border-color:${a.clr}44">${a.name[0]}</div>
-      <div class="s-card-name">${a.name}</div><div class="s-card-role">${a.spec}</div>
-      <div class="s-stats">
-        <div class="s-stat"><div class="s-stat-v">${ab.length}</div><div class="s-stat-l">Bookings</div></div>
-        <div class="s-stat"><div class="s-stat-v">CA$${(rev/1000).toFixed(1)}K</div><div class="s-stat-l">Revenue</div></div>
-        <div class="s-stat"><div class="s-stat-v">${done}</div><div class="s-stat-l">Done</div></div>
-        <div class="s-stat"><div class="s-stat-v">${a.rating}⭐</div><div class="s-stat-l">Rating</div></div>
-      </div>
-    </div>`;
-  }).join('');
-  const bkCounts=ARTISTS.map(a=>getBK().filter(b=>b.artist===a.name).length);
-  const revCounts=ARTISTS.map(a=>getBK().filter(b=>b.artist===a.name).reduce((s,b)=>s+pp(b.svc?.p),0));
-  mkC('c-team-cmp','bar',ARTISTS.map(a=>a.name),[
-    {label:'Bookings',data:bkCounts,backgroundColor:ARTISTS.map(a=>a.clr+'99'),borderRadius:6,borderSkipped:false,yAxisID:'y'},
-    {label:'Revenue CA$',data:revCounts,backgroundColor:ARTISTS.map(a=>a.clr+'44'),borderRadius:6,borderSkipped:false,yAxisID:'y1'},
-  ],{plugins:{legend:{display:true,labels:{color:'#8B7AB8',font:{size:10}}}},scales:{x:{grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580'}},y:{type:'linear',position:'left',grid:{color:'rgba(114,9,183,.08)'},ticks:{color:'#554580'}},y1:{type:'linear',position:'right',grid:{display:false},ticks:{color:'#554580',callback:v=>'$'+v}}}});
+function go(p) {
+  document.querySelectorAll('.pg').forEach(function(x) { x.classList.remove('on'); });
+  var pg = document.getElementById('pg-' + p);
+  if (pg) pg.classList.add('on');
+  document.querySelectorAll('.ni').forEach(function(x) { x.classList.remove('active'); });
+  var ni = document.querySelector('[data-pg="' + p + '"]');
+  if (ni) ni.classList.add('active');
+  var ttl = document.getElementById('tb-ttl');
+  if (ttl) ttl.textContent = TITLES[p] || p;
+  if (window.innerWidth < 980) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
+}
+document.querySelectorAll('.ni').forEach(function(el) {
+  el.addEventListener('click', function() { go(el.dataset.pg); });
+});
+
+function clock() {
+  var n = new Date();
+  var h = n.getHours();
+  var gr = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  var grel = document.getElementById('dash-gr');
+  if (grel) grel.textContent = gr + ' \u2726';
+  var ds = n.toLocaleDateString('en-CA', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var dtel = document.getElementById('dash-dt');
+  if (dtel) dtel.textContent = ds + ' \u00b7 Daily overview';
+  var tdt = document.getElementById('tb-dt');
+  if (tdt) tdt.textContent = n.toLocaleDateString('en-CA', {day:'numeric',month:'long'}) + ' ' + n.toLocaleTimeString('en-CA', {hour:'2-digit',minute:'2-digit'});
 }
 
-/*═══════════════ CUSTOMERS ═══════════════*/
-function renderCust(){
-  const bk=getBK(),cl={};
-  bk.forEach(b=>{const k=b.client?.em;if(k){if(!cl[k]){cl[k]={fn:b.client.fn,ln:b.client.ln,cnt:0,rev:0,last:b.date};}cl[k].cnt++;cl[k].rev+=pp(b.svc?.p);if(b.date>cl[k].last)cl[k].last=b.date;}});
-  const sorted=Object.values(cl).sort((a,b)=>b.rev-a.rev);
-  const avgLTV=sorted.length?Math.round(sorted.reduce((s,c)=>s+c.rev,0)/sorted.length):0;
-  const ckpis=[
-    {icon:'👥',lbl:'Total Clients',val:sorted.length,delta:'↑ 12 this month',ib:'rgba(247,37,133,.2)',tl:'var(--grad)'},
-    {icon:'🔁',lbl:'Retention Rate',val:'68%',delta:'↑ 5% vs last month',ib:'rgba(6,214,160,.15)',tl:'linear-gradient(90deg,var(--green),var(--cyan))'},
-    {icon:'🆕',lbl:'New This Month',val:'32',delta:'8 from Google',ib:'rgba(76,201,240,.15)',tl:'linear-gradient(90deg,var(--cyan),var(--violet))'},
-    {icon:'💎',lbl:'Avg Lifetime Value',val:`CA$${avgLTV}`,delta:'Per client all-time',ib:'rgba(248,181,0,.15)',tl:'var(--grad-gold)'},
+var CH = {};
+function mkC(id, type, labels, datasets, opts) {
+  var ctx = document.getElementById(id);
+  if (!ctx) return;
+  ctx = ctx.getContext('2d');
+  if (CH[id]) CH[id].destroy();
+  var base = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {display: false},
+      tooltip: {backgroundColor:'rgba(10,3,24,.95)',titleColor:'#EDE9F6',bodyColor:'#8B7AB8',borderColor:'rgba(114,9,183,.3)',borderWidth:1,padding:9,cornerRadius:7}
+    },
+    scales: {
+      x: {grid:{color:'rgba(114,9,183,.07)'},ticks:{color:'#554580',font:{size:10}}},
+      y: {grid:{color:'rgba(114,9,183,.07)'},ticks:{color:'#554580',font:{size:10}}}
+    }
+  };
+  if (type === 'doughnut' || type === 'pie' || type === 'polarArea') {
+    delete base.scales;
+    base.plugins.legend = {display:true,position:'right',labels:{color:'#8B7AB8',boxWidth:8,padding:6,font:{size:10}}};
+  }
+  var finalOpts = Object.assign({}, base, opts || {});
+  CH[id] = new Chart(ctx, {type:type, data:{labels:labels,datasets:datasets}, options:finalOpts});
+}
+
+function initCharts() {
+  var rCtx = document.getElementById('c-rev');
+  if (rCtx) {
+    var g = rCtx.getContext('2d').createLinearGradient(0,0,0,170);
+    g.addColorStop(0,'rgba(247,37,133,.9)');
+    g.addColorStop(1,'rgba(114,9,183,.25)');
+    mkC('c-rev','bar',['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[{data:[420,580,340,690,780,920,310],backgroundColor:g,borderRadius:6,borderSkipped:false}]);
+  }
+  mkC('c-status','doughnut',['Confirmed','Pending','Completed','Cancelled'],[{data:[48,12,89,8],backgroundColor:['rgba(76,201,240,.85)','rgba(251,133,0,.85)','rgba(6,214,160,.85)','rgba(239,35,60,.85)'],borderWidth:0}]);
+  var wCtx = document.getElementById('c-week');
+  if (wCtx) {
+    var g2 = wCtx.getContext('2d').createLinearGradient(0,0,0,170);
+    g2.addColorStop(0,'rgba(114,9,183,.8)');
+    g2.addColorStop(1,'rgba(114,9,183,.12)');
+    mkC('c-week','bar',['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[{data:[620,880,540,1020,1180,1380,460],backgroundColor:g2,borderRadius:5,borderSkipped:false}]);
+  }
+  var aCtx = document.getElementById('c-acq');
+  if (aCtx) {
+    var g3 = aCtx.getContext('2d').createLinearGradient(0,0,0,170);
+    g3.addColorStop(0,'rgba(76,201,240,.18)');
+    g3.addColorStop(1,'rgba(76,201,240,.01)');
+    mkC('c-acq','line',['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],[{data:[22,19,28,32,35,31,38,42,29,35,44,48],borderColor:'#4CC9F0',backgroundColor:g3,fill:true,tension:.4,pointBackgroundColor:'#4CC9F0',pointRadius:3}]);
+  }
+}
+
+function renderDashKPIs() {
+  var kpis = [
+    {i:'fa-calendar-check',l:"Today's Appointments",v:'12',d:'↑ 3 vs yesterday',c:'var(--pink)'},
+    {i:'fa-coins',l:"Today's Revenue",v:'CA$840',d:'↑ 18%',c:'var(--green)'},
+    {i:'fa-chart-line',l:'Monthly Revenue',v:'CA$18.4K',d:'↑ 24%',c:'var(--violet)'},
+    {i:'fa-gauge-high',l:'Occupancy Rate',v:'87%',d:'↑ 5%',c:'var(--amber)'},
+    {i:'fa-user-slash',l:"Today's No-shows",v:'2',d:'Follow-up needed',c:'var(--red)',neg:1},
+    {i:'fa-star',l:'Customer Rating',v:'4.94',d:'553 reviews',c:'var(--gold)'},
+    {i:'fa-users',l:'Active Clients',v:'215',d:'↑ 12 this month',c:'var(--cyan)'},
+    {i:'fa-id-badge',l:'Active Staff',v:'4',d:'Happy on leave',c:'var(--pink)'},
+    {i:'fa-boxes-stacked',l:'Critical Stock',v:'3',d:'Order needed',c:'var(--red)',neg:1},
+    {i:'fa-crown',l:'VIP Clients',v:'28',d:'6 Gold, 22 Silver',c:'var(--gold)'},
+    {i:'fa-ticket',l:'Avg Ticket',v:'CA$62',d:'↑ CA$4',c:'var(--amber)'},
+    {i:'fa-repeat',l:'Return Rate',v:'68%',d:'↑ 5%',c:'var(--green)'},
   ];
-  document.getElementById('cust-kpis').innerHTML=ckpis.map(k=>`
-    <div class="kpi">
-      <div class="kpi-top-line" style="background:${k.tl}"></div>
-      <div class="kpi-icon" style="background:${k.ib}">${k.icon}</div>
-      <div class="kpi-value">${k.val}</div>
-      <div class="kpi-label">${k.lbl}</div>
-      <div class="kpi-delta delta-up">${k.delta}</div>
-    </div>`).join('');
-  const acCtx=document.getElementById('c-acquisition')?.getContext('2d');
-  if(acCtx){if(CH['c-acquisition'])CH['c-acquisition'].destroy();const g=mkGrad(acCtx,'rgba(76,201,240,.2)','rgba(76,201,240,.01)');mkC('c-acquisition','line',MOS,[{data:[18,22,19,28,32,35,31,38,42,29,35,44],borderColor:'var(--cyan)',backgroundColor:g,fill:true,tension:.4,pointBackgroundColor:'#4CC9F0',pointRadius:4}]);}
-  document.getElementById('top-clients').innerHTML=sorted.slice(0,8).map((c,i)=>`
-    <div class="rank-item">
-      <div class="rank-n ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
-      <div class="rank-body"><div class="rank-name">${c.fn} ${c.ln}</div><div class="rank-meta">${c.cnt} visits · Last: ${c.last}</div></div>
-      <div class="rank-val">CA$${c.rev}</div>
-    </div>`).join('');
-}
-
-/*═══════════════ REPORTS ═══════════════*/
-function renderReports(){
-  // KPI report
-  const rk=[{icon:'💰',lbl:'Monthly Revenue',val:'CA$18,400'},{icon:'📅',lbl:'Total Bookings',val:'163'},{icon:'✅',lbl:'Completion Rate',val:'88%'},{icon:'❌',lbl:'Cancel Rate',val:'11.6%'},{icon:'💵',lbl:'Avg Ticket',val:'CA$62'},{icon:'🔁',lbl:'Return Rate',val:'68%'},{icon:'⭐',lbl:'Rating',val:'4.94'},{icon:'💎',lbl:'Avg LTV',val:'CA$341'}];
-  document.getElementById('kpi-rep').innerHTML=rk.map(k=>`<div class="rk"><div class="rk-icon">${k.icon}</div><div class="rk-val">${k.val}</div><div class="rk-lbl">${k.lbl}</div></div>`).join('');
-  // Daily
-  const rev=[420,580,340,690,780,920,310],cnt=[8,11,7,13,14,16,6];
-  document.getElementById('daily-tbody').innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d,i)=>{
-    const dt=rev[i]*(Math.random()*.2-.1);
-    return`<tr><td class="td-strong">${d}</td><td>${cnt[i]}</td><td style="color:var(--gold);font-weight:600">CA$${rev[i]}</td><td class="td-muted">CA$${Math.round(rev[i]/cnt[i])}</td><td style="color:${dt>0?'var(--green)':'var(--red)'}">${dt>0?'↑':'↓'}CA$${Math.abs(dt).toFixed(0)}</td></tr>`;
+  var el = document.getElementById('dash-kpis');
+  if (el) el.innerHTML = kpis.map(function(k) {
+    return '<div class="kc" style="--kclr:' + k.c + '"><i class="fa-solid ' + k.i + ' kci"></i><div class="kcv">' + k.v + '</div><div class="kcl">' + k.l + '</div><div class="kcd ' + (k.neg ? 'neg' : '') + '">' + k.d + '</div></div>';
   }).join('');
-  // Service
-  document.getElementById('svc-tbody').innerHTML=SERVICES.map(s=>`<tr><td class="td-strong">${s.n}</td><td>${s.c}</td><td style="color:var(--gold);font-weight:600">CA$${(s.p*s.c).toLocaleString()}</td><td><div class="prog" style="width:70px;display:inline-block"><div class="prog-bar" style="width:${Math.round(s.c/68*100)}%;background:${s.clr}"></div></div></td></tr>`).join('');
-  // Cancellations
-  const reasons=['Client request','Emergency','No-show','Rescheduled','Weather'];
-  document.getElementById('cancel-tbody').innerHTML=getBK().filter(b=>b.status==='cancelled').slice(0,6).map(b=>`<tr><td class="td-muted">${b.dateD}</td><td>${b.client.fn} ${b.client.ln}</td><td>${b.svc.n}</td><td class="td-muted">${b.artist}</td><td><span class="status s-pending">${reasons[Math.floor(Math.random()*reasons.length)]}</span></td></tr>`).join('');
-  // Artist split
-  document.getElementById('artist-tbody').innerHTML=ARTISTS.map(a=>`<tr><td><div style="display:flex;align-items:center;gap:.4rem"><div class="av av-sm">${a.name[0]}</div>${a.name}</div></td><td>${a.bk}</td><td style="color:var(--gold);font-weight:600">CA$${a.rev.toLocaleString()}</td><td style="color:var(--green)">CA$${Math.round(a.rev*.25).toLocaleString()}</td><td><span class="status s-completed">${a.rating}⭐</span></td></tr>`).join('');
-  // Products
-  document.getElementById('prod-tbody').innerHTML=PRODUCTS.map(p=>`<tr><td class="td-strong">${p.n}</td><td>${p.sold}</td><td class="td-muted">CA$${p.price}</td><td style="color:var(--gold);font-weight:600">CA$${p.sold*p.price}</td><td><span class="status ${p.stock<20?'s-pending':'s-completed'}">${p.stock} left</span></td></tr>`).join('');
 }
 
-/*═══════════════ HEATMAP ═══════════════*/
-function renderHeatmap(){
-  const hrs=['9am','9:30','10','10:30','11','11:30','12pm','12:30','1pm','1:30','2pm','2:30','3pm'];
-  const hd={Mon:[2,3,4,5,6,5,4,5,6,5,4,3,2],Tue:[3,4,6,7,8,7,6,7,8,6,5,4,3],Wed:[1,2,3,4,5,4,3,4,5,4,3,2,1],Thu:[4,5,7,8,9,8,7,8,9,7,6,5,4],Fri:[5,6,8,9,10,9,8,9,10,8,7,6,5],Sat:[6,7,9,10,10,9,8,9,10,9,8,7,6],Sun:[3,4,5,6,7,6,5,6,7,6,5,4,3]};
-  let h='<div></div>'+hrs.map(x=>`<div class="hm-cl">${x}</div>`).join('');
-  Object.entries(hd).forEach(([day,vals])=>{
-    h+=`<div class="hm-rl">${day}</div>`;
-    vals.forEach((v,vi)=>{
-      const a=(v/10*.88+.05).toFixed(2);
-      const bg=v>7?`rgba(247,37,133,${a})`:v>4?`rgba(114,9,183,${a})`:`rgba(114,9,183,${(v/10*.3+.04).toFixed(2)})`;
-      h+=`<div class="hm-cell" style="background:${bg}" title="${day} ${hrs[vi]}: ${v} bookings"></div>`;
-    });
-  });
-  document.getElementById('hm-grid').innerHTML=h;
-  mkC('c-busyday','bar',DAYS,[{data:[22,31,18,38,42,47,28],backgroundColor:(ctx)=>{const v=ctx.dataIndex;return(v===5||v===4)?'rgba(247,37,133,.85)':'rgba(114,9,183,.65)';},borderRadius:6,borderSkipped:false}]);
-  const phCtx=document.getElementById('c-peakhour')?.getContext('2d');
-  if(phCtx){if(CH['c-peakhour'])CH['c-peakhour'].destroy();const g=mkGrad(phCtx,'rgba(114,9,183,.3)','rgba(114,9,183,.01)');mkC('c-peakhour','line',hrs,[{data:[18,24,32,40,45,42,35,40,48,40,35,28,20],borderColor:'#7209B7',backgroundColor:g,fill:true,tension:.4,pointBackgroundColor:'#7209B7',pointRadius:4}]);}
+function renderRepKPIs() {
+  var kpis = [
+    {i:'fa-coins',l:'Monthly Revenue',v:'CA$18,400',c:'var(--green)'},
+    {i:'fa-calendar',l:'Total Bookings',v:'163',c:'var(--pink)'},
+    {i:'fa-check',l:'Completion Rate',v:'88%',c:'var(--cyan)'},
+    {i:'fa-user-slash',l:'No-show Rate',v:'6.7%',c:'var(--red)',neg:1},
+    {i:'fa-ticket',l:'Avg Ticket',v:'CA$62',c:'var(--amber)'},
+    {i:'fa-repeat',l:'Return Rate',v:'68%',c:'var(--green)'},
+    {i:'fa-star',l:'Avg Rating',v:'4.94',c:'var(--gold)'},
+    {i:'fa-users',l:'Active Clients',v:'215',c:'var(--violet)'},
+    {i:'fa-crown',l:'VIP Count',v:'28',c:'var(--gold)'},
+    {i:'fa-boxes-stacked',l:'Stock Alerts',v:'3',c:'var(--red)',neg:1},
+    {i:'fa-dollar-sign',l:'Net Profit',v:'CA$10.6K',c:'var(--green)'},
+    {i:'fa-percent',l:'Net Margin',v:'58%',c:'var(--cyan)'},
+  ];
+  var el = document.getElementById('rep-kpis');
+  if (el) el.innerHTML = kpis.map(function(k) {
+    return '<div class="kc" style="--kclr:' + k.c + '"><i class="fa-solid ' + k.i + ' kci"></i><div class="kcv">' + k.v + '</div><div class="kcl">' + k.l + '</div><div class="kcd ' + (k.neg ? 'neg' : '') + '">This month</div></div>';
+  }).join('');
 }
 
-/*═══════════════ TODO ═══════════════*/
-const TODOS=[
-  {id:'domain',sec:'🚨 Critical',ttl:'Buy Custom Domain — marchnails.ca',desc:'GitHub URL is not professional and actively hurts Google ranking. Cost: ~CA$15/year.',time:'1 day',tag:'crit',link:'https://namecheap.com'},
-  {id:'index',sec:'🚨 Critical',ttl:'Fix Root URL (Create index.html)',desc:'Opening garagusu.github.io/marchnails shows a blank 404 page. Takes 1 hour to fix.',time:'1 hr',tag:'crit'},
-  {id:'pw',sec:'🚨 Critical',ttl:'Change Admin Password (admin123)',desc:'Default password is visible in the public GitHub repository. Immediate security risk.',time:'5 min',tag:'crit'},
-  {id:'photos',sec:'⚡ High Impact',ttl:'Add Real Service Photos',desc:'Service cards show gradients instead of nail photos. Grab real ones from Pexels — free and instant.',time:'1 week',tag:'imp',link:'https://pexels.com/search/nail+salon/'},
-  {id:'ga4',sec:'⚡ High Impact',ttl:'Set Up Google Analytics 4',desc:'Zero visitor data right now. Cannot measure growth or conversions without this.',time:'1 day',tag:'imp',link:'https://analytics.google.com'},
-  {id:'supabase',sec:'⚡ High Impact',ttl:'Connect Supabase (Multi-Device Bookings)',desc:'Bookings currently only save on the device that made them. Supabase solves this — free tier is plenty.',time:'1 day',tag:'imp',link:'https://supabase.com'},
-  {id:'bkform',sec:'🔧 Improvements',ttl:'Simplify Booking Form to 2 Steps',desc:'4 steps is too many. Every extra step loses ~20% of users. Make artist selection optional.',time:'3 days',tag:'imp'},
-  {id:'ig',sec:'🔧 Improvements',ttl:'Embed Live Instagram Feed',desc:'@march.nails posts beautiful work. Show it on the site automatically.',time:'2 days',tag:'grow',link:'https://instagram.com/march.nails'},
-  {id:'gmb',sec:'🔧 Improvements',ttl:'Link Google My Business to Site',desc:'Add the website URL in your Google Business profile. This directly improves your Maps ranking.',time:'3 days',tag:'grow'},
-  {id:'blog',sec:'📈 Growth',ttl:'Start a Blog for SEO',desc:'"Best nail designs Ottawa 2025" — posts like this bring free Google traffic every month.',time:'1 week',tag:'grow'},
-];
-function getTDS(){try{return JSON.parse(localStorage.getItem('mn_todos')||'{}')}catch(e){return{}}}
-function saveTDS(s){localStorage.setItem('mn_todos',JSON.stringify(s));}
-function renderTodo(){
-  const st=getTDS(),secs={};
-  TODOS.forEach(t=>{if(!secs[t.sec])secs[t.sec]=[];secs[t.sec].push(t);});
-  const done=Object.values(st).filter(v=>v.done).length,pct=Math.round(done/TODOS.length*100);
-  document.getElementById('todo-bar').style.width=pct+'%';
-  document.getElementById('todo-pct').textContent=pct+'%';
-  document.getElementById('todo-pct-lbl').textContent=`${done} / ${TODOS.length} complete`;
-  const tc={crit:'tag-crit',imp:'tag-imp',grow:'tag-grow'},tl={crit:'Critical',imp:'Important',grow:'Growth'};
-  document.getElementById('todo-list').innerHTML=Object.entries(secs).map(([sec,items])=>`
-    <div class="todo-sec">${sec}</div>
-    ${items.map(t=>{const d=!!st[t.id]?.done;return`<div class="todo-item${d?' done':''}" onclick="toggleTodo('${t.id}')">
-      <div class="todo-ck">${d?'✓':''}</div>
-      <div class="todo-body">
-        <div class="todo-title">${t.ttl}<span class="tag ${tc[t.tag]}">${tl[t.tag]}</span></div>
-        <div class="todo-desc">${t.desc}</div>
-        <div class="todo-meta">
-          <span class="todo-time">⏱ ${t.time}</span>
-          ${t.link?`<a href="${t.link}" target="_blank" onclick="event.stopPropagation()" style="font-size:.65rem;color:var(--cyan)">Open ↗</a>`:''}
-          ${d&&st[t.id]?.date?`<span style="font-size:.65rem;color:var(--green)">Done ${st[t.id].date}</span>`:''}
-        </div>
-      </div>
-    </div>`;}).join('')}`).join('');
-  const rem=TODOS.length-done,nb=document.getElementById('nb-todo');
-  if(nb){nb.textContent=rem;nb.style.display=rem?'':'none';}
-}
-function toggleTodo(id){
-  const st=getTDS();
-  if(st[id]?.done)delete st[id];
-  else st[id]={done:true,date:new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric'})};
-  saveTDS(st);renderTodo();
-  const t=TODOS.find(x=>x.id===id);
-  toast(st[id]?`✅ "${t.ttl.slice(0,30)}…" done`:'↩ Reopened',st[id]?'ok':'inf');
+var AIR = {
+  revenue: "📊 Analysis complete. Month-over-month trend: +18%. Highest revenue day is <strong>Saturday</strong> (avg CA$920). Suggestion: Flower's Thursday occupancy is only 62% — adding a campaign there could generate an extra <strong>CA$1,200+/month</strong>.",
+  campaign: "🎯 3 critical segments identified:<br>1. <strong>23 clients inactive 4+ weeks</strong> → Send 'We miss you' message (68% conversion estimate)<br>2. <strong>2 clients with birthdays tomorrow</strong> → Send 10% surprise coupon<br>3. <strong>5 Silver members 80 points from Gold</strong> → Run Gold incentive campaign",
+  inventory: "⚠️ 3 products at critical level. <strong>Cuticle Oil</strong> is most urgent — weekly usage 8 units, only 3 left. Will run out this weekend. Shall I send an auto-order to Beauty Supply Co.?",
+  staff: "👩‍🎨 <strong>Flower</strong> generates the highest revenue (CA$3,520/month, 5.0⭐). <strong>Happy</strong> has the most bookings (48). Suggestion: Happy's Wednesday evenings are only 40% full — a special campaign could add CA$480/month.",
+  reviews: "⭐ Average 4.94 — Top 5% nationally. There are 2 four-star reviews this month. Reply to Sophie Tremblay's 'wait time' comment. Your NPS score is 72 — excellent level.",
+  appointments: "📅 This month: <strong>163 appointments</strong>, 88% completion rate, 6.7% no-show rate. Suggestion: Send a WhatsApp reminder the morning of each appointment — this typically reduces no-shows by 40%.",
+  default: "Analyzing your data... This month: 163 appointments, CA$18.4K revenue, 4.94 rating. I can help with: <em>revenue, campaign, inventory, staff, reviews, appointments</em>"
+};
+
+function sendAI() {
+  var inp = document.getElementById('chat-inp');
+  var q = inp.value.trim();
+  if (!q) return;
+  var area = document.getElementById('chat-area');
+  area.innerHTML += '<div class="ubub">' + q + '</div>';
+  inp.value = '';
+  area.innerHTML += '<div class="aitype" id="typing"><span></span><span></span><span></span></div>';
+  area.scrollTop = area.scrollHeight;
+  var ql = q.toLowerCase();
+  var key = 'default';
+  var keys = Object.keys(AIR);
+  for (var i = 0; i < keys.length; i++) {
+    if (ql.indexOf(keys[i]) !== -1) { key = keys[i]; break; }
+  }
+  setTimeout(function() {
+    var typing = document.getElementById('typing');
+    if (typing) typing.remove();
+    area.innerHTML += '<div class="aibub">' + AIR[key] + '</div>';
+    area.scrollTop = area.scrollHeight;
+  }, 1200);
 }
 
-/*═══════════════ SETTINGS ═══════════════*/
-function loadKeys(){
-  const u=localStorage.getItem('mn_sb_url'),k=localStorage.getItem('mn_sb_key');
-  if(u)document.getElementById('sb-url').value=u;
-  if(k)document.getElementById('sb-key').value=k;
-  if(u&&k)document.getElementById('sb-status').innerHTML='<span style="color:var(--green)">✓ Connected</span>';
-  ['pub','svc','tpl'].forEach(x=>{const v=localStorage.getItem('mn_ejs_'+x);if(v)document.getElementById('ejs-'+x).value=v;});
-}
-function saveSB(){
-  const u=document.getElementById('sb-url').value.trim(),k=document.getElementById('sb-key').value.trim();
-  if(!u||!k){toast('Fill in both URL and key','err');return;}
-  localStorage.setItem('mn_sb_url',u);localStorage.setItem('mn_sb_key',k);
-  document.getElementById('sb-status').innerHTML='<span style="color:var(--green)">✓ Saved</span>';
-  toast('Supabase connected — bookings now sync across all devices','ok');
-}
-async function testSB(){
-  const u=document.getElementById('sb-url').value.trim(),k=document.getElementById('sb-key').value.trim(),el=document.getElementById('sb-status');
-  if(!u||!k){toast('Enter URL and key first','err');return;}
-  el.innerHTML='<span style="color:var(--amber)">Testing…</span>';
-  try{
-    const r=await fetch(`${u}/rest/v1/bookings?select=id&limit=1`,{headers:{'apikey':k,'Authorization':`Bearer ${k}`}});
-    if(r.ok){const d=await r.json();el.innerHTML=`<span style="color:var(--green)">✅ Connected · ${d.length} bookings found</span>`;localStorage.setItem('mn_sb_url',u);localStorage.setItem('mn_sb_key',k);toast('Connection successful!','ok');}
-    else el.innerHTML=`<span style="color:var(--red)">✗ Error ${r.status}</span>`;
-  }catch(e){el.innerHTML=`<span style="color:var(--red)">✗ ${e.message}</span>`;}
-}
-function saveEJS(){
-  ['pub','svc','tpl'].forEach(x=>localStorage.setItem('mn_ejs_'+x,document.getElementById('ejs-'+x).value.trim()));
-  toast('EmailJS settings saved','ok');
-}
-
-/*═══════════════ EXPORT ═══════════════*/
-function exportCSV(){
-  const bk=getBK(),rows=[['ID','Status','First','Last','Phone','Email','Service','Price','Artist','Date','Time']];
-  bk.forEach(b=>rows.push([b.id,b.status,b.client.fn,b.client.ln,b.client.ph,b.client.em,b.svc.n,b.svc.p,b.artist,b.date,b.time]));
-  const csv=rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download=`march-nails-${new Date().toISOString().slice(0,10)}.csv`;a.click();
-  toast('CSV exported ✓','ok');
-}
-
-/*═══════════════ TOAST ═══════════════*/
-function toast(msg,type='ok'){
-  const icons={ok:'✅',err:'❌',inf:'ℹ️'};
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
-  el.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
+function toast(msg, type) {
+  type = type || 'ok';
+  var icons = {ok:'✅', err:'❌', inf:'ℹ️'};
+  var el = document.createElement('div');
+  el.className = 'titem ' + type;
+  el.innerHTML = '<span>' + (icons[type] || '💬') + '</span><span>' + msg + '</span>';
   document.getElementById('toast').appendChild(el);
-  setTimeout(()=>el.remove(),3400);
+  setTimeout(function() { el.remove(); }, 3500);
 }
 
-/*═══════════════ AUTO-BOOT ═══════════════*/
-window.addEventListener('DOMContentLoaded',()=>{
-  // Remove these 2 lines if you want the login screen shown
-  document.getElementById('login').style.display='none';
-  document.getElementById('app').style.display='flex';
+function boot() {
+  clock();
+  setInterval(clock, 60000);
+  renderDashKPIs();
+  renderRepKPIs();
+  setTimeout(initCharts, 150);
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
   boot();
 });
 </script>
