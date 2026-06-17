@@ -1050,6 +1050,113 @@ var TITLES = {
   revenue:'Revenue', emails:'Email Log', services:'Services',
   loyalty:'Loyalty Program', marketing:'Marketing', settings:'Settings'
 };
+/* ── SUPABASE CONFIG ── */
+var SB_URL = 'https://homsihklvbxtkldkmhqq.supabase.co';
+var SB_KEY = 'sb_publishable_AlxrfzyU5jTlK1Rl-ZCcvw_VfjSaqTZ';
+var SB_CONNECTED = false;
+
+function sbFetch(path, opts) {
+  // Block if running from file:// — fetch() won't work
+  if (window.location.protocol === 'file:') {
+    return Promise.reject(new Error('FILE_PROTOCOL'));
+  }
+
+  var url = SB_URL + '/rest/v1/' + path;
+  var method = (opts && opts.method) || 'GET';
+  var headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json'
+  };
+  // Prefer header only for mutations
+  if (method !== 'GET' && method !== 'DELETE') {
+    headers['Prefer'] = 'return=representation';
+  }
+
+  var fetchOpts = {method: method, headers: headers};
+  if (opts && opts.body) fetchOpts.body = opts.body;
+
+  return fetch(url, fetchOpts).then(function(res) {
+    if (!res.ok && res.status !== 200 && res.status !== 201) {
+      return res.text().then(function(txt) {
+        throw new Error('HTTP ' + res.status + ': ' + txt.slice(0, 200));
+      });
+    }
+    return res;
+  });
+}
+
+function sbGet(table, query) {
+  return sbFetch(table + '?' + (query || 'order=created_at.desc&limit=100'));
+}
+
+function sbInsert(table, data) {
+  return sbFetch(table, {method: 'POST', body: JSON.stringify(data)});
+}
+
+function sbUpdate(table, id, data) {
+  return sbFetch(table + '?id=eq.' + id, {method: 'PATCH', body: JSON.stringify(data)});
+}
+
+function sbDelete(table, id) {
+  return sbFetch(table + '?id=eq.' + id, {method: 'DELETE'});
+}
+
+function testConnection() {
+  if (window.location.protocol === 'file:') {
+    showBanner('error',
+      '<i class="fa-solid fa-triangle-exclamation"></i> ' +
+      '<strong>Cannot connect to Supabase.</strong> ' +
+      'This file is open from your desktop (file://). ' +
+      'Upload to GitHub Pages first, then Supabase will work. ' +
+      '<a href="https://github.com/Garagusu/marchnails" target="_blank" style="color:inherit;text-decoration:underline">Open GitHub repo →</a>'
+    );
+    return;
+  }
+
+  sbGet('clients', 'limit=1')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      SB_CONNECTED = true;
+      showBanner('success', '<i class="fa-solid fa-circle-check"></i> Supabase connected ✓');
+      setTimeout(hideBanner, 3000);
+    })
+    .catch(function(err) {
+      var msg = String(err.message || err);
+      var hint = '';
+      if (msg.indexOf('401') !== -1 || msg.indexOf('403') !== -1) {
+        hint = 'API key may be wrong. Check Settings → API in Supabase.';
+      } else if (msg.indexOf('404') !== -1) {
+        hint = 'Table not found. Did you run the SQL setup?';
+      } else if (msg.indexOf('Failed to fetch') !== -1) {
+        hint = 'Network error. Check your internet connection.';
+      } else {
+        hint = msg.slice(0, 120);
+      }
+      showBanner('error', '<i class="fa-solid fa-circle-xmark"></i> <strong>Supabase connection failed:</strong> ' + hint);
+    });
+}
+
+function showBanner(type, html) {
+  hideBanner();
+  var b = document.createElement('div');
+  b.id = 'sb-banner';
+  var bg = type === 'success' ? '#F0FDF4' : '#FEF2F2';
+  var border = type === 'success' ? '#6EE7B7' : '#FCA5A5';
+  var color = type === 'success' ? '#065F46' : '#991B1B';
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px 20px;' +
+    'background:' + bg + ';border-bottom:2px solid ' + border + ';' +
+    'color:' + color + ';font-size:.82rem;display:flex;align-items:center;gap:8px;' +
+    'font-family:Inter,sans-serif';
+  b.innerHTML = html + '<span onclick="hideBanner()" style="margin-left:auto;cursor:pointer;font-size:1.1rem;opacity:.6">×</span>';
+  document.body.prepend(b);
+}
+
+function hideBanner() {
+  var b = document.getElementById('sb-banner');
+  if (b) b.remove();
+}
+
 var PW = localStorage.getItem('mn_pw') || 'admin123';
 
 function doLogin() {
@@ -1243,7 +1350,7 @@ function renderSchedule() {
         var clientParts = rest.split(' ');
         var client = clientParts.slice(0,2).join(' ');
         var svc = clientParts.slice(2).join(' ');
-        html += '<div class="sch-slot"><div class="sch-appt" style="background:' + bgs[name] + ';border-color:' + colors[name] + '22" onclick="toast(\'Viewing ' + client + '\',\'inf\')">' +
+        html += '<div class="sch-slot"><div class="sch-appt" style="background:' + bgs[name] + ';border-color:' + colors[name] + '22" onclick="toast(this.dataset.c,\'inf\')" data-c="' + client.replace(/"/g,'&quot;') + '">' +
           '<div class="sch-client" style="color:' + colors[name] + '">' + client + '</div>' +
           '<div class="sch-svc">' + svc + ' <strong>' + price + '</strong></div>' +
           '</div></div>';
@@ -1362,13 +1469,377 @@ function toast(msg, type) {
   setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 3500);
 }
 
+/* ── CLIENTS TABLE (real data) ── */
+function renderClientsTable() {
+  var tbody = document.querySelector('#pg-clients .tw table tbody');
+  if (!tbody || ALL_CLIENTS.length === 0) return;
+
+  var tierBadge = {
+    'standard': '<span class="bdg bblue">Standard</span>',
+    'silver':   '<span class="bdg bviolet">Silver</span>',
+    'gold':     '<span class="bdg bgold">\u2605 Gold</span>',
+    'platinum': '<span class="bdg bpink">Platinum</span>'
+  };
+  var grads = [
+    'linear-gradient(135deg,#E91E8C,#7C3AED)',
+    'linear-gradient(135deg,#7C3AED,#4F46E5)',
+    'linear-gradient(135deg,#06B6D4,#0284C7)',
+    'linear-gradient(135deg,#D97706,#B45309)',
+    'linear-gradient(135deg,#EF4444,#DC2626)'
+  ];
+
+  var rows = ALL_CLIENTS.map(function(c, i) {
+    var name = (c.first_name || '') + ' ' + (c.last_name || '');
+    var init = c.first_name ? c.first_name[0] : '?';
+    var grad = grads[i % grads.length];
+    var bd = c.birthday ? new Date(c.birthday) : null;
+    var bdStr = bd ? bd.toLocaleDateString('en-CA', {month:'short', day:'numeric'}) : '\u2014';
+    var isBdSoon = bd && (function() {
+      var now = new Date();
+      var next = new Date(now.getFullYear(), bd.getMonth(), bd.getDate());
+      if (next < now) next.setFullYear(now.getFullYear() + 1);
+      return (next - now) < 7 * 24 * 3600 * 1000;
+    }());
+    var tier = c.tier || 'standard';
+    var badge = tierBadge[tier] || tierBadge['standard'];
+    var noShow = c.no_show_count || 0;
+    var pts = c.loyalty_points || 0;
+
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><div style="display:flex;align-items:center;gap:5px">' +
+        '<div style="width:24px;height:24px;border-radius:50%;background:' + grad + ';display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">' + init + '</div>' +
+        '<div><div class="tds">' + name + '</div><div class="tdm" style="font-size:.65rem">' + (c.email || '') + '</div></div>' +
+      '</div></td>' +
+      '<td>' + badge + '</td>' +
+      '<td class="tdm">\u2014</td>' +
+      '<td class="tdm">\u2014</td>' +
+      '<td class="tdm">\u2014</td>' +
+      '<td ' + (isBdSoon ? 'style="color:var(--pink);font-weight:600"' : 'class="tdm"') + '>' + bdStr + (isBdSoon ? ' \u2665' : '') + '</td>' +
+      '<td style="color:var(--gold);font-weight:600">' + pts + '</td>' +
+      '<td style="color:' + (noShow > 0 ? 'var(--red)' : 'var(--text2)') + ';font-weight:' + (noShow > 0 ? '600' : '400') + '">' + noShow + '</td>' +
+      '<td></td>';
+
+    var btn = document.createElement('button');
+    btn.className = 'btn btnsm';
+    btn.textContent = 'Profile';
+    btn.addEventListener('click', (function(clientName) {
+      return function() { toast(clientName, 'inf'); };
+    }(name)));
+    tr.querySelector('td:last-child').appendChild(btn);
+
+    return tr;
+  });
+
+  tbody.innerHTML = '';
+  rows.forEach(function(tr) { tbody.appendChild(tr); });
+}
+
+
 /* ── BOOT ── */
+/* ── REAL DATA LOADERS ── */
+
+var ALL_BOOKINGS = [];
+var ALL_CLIENTS = [];
+var ALL_PAYMENTS = [];
+
+function loadBookings() {
+  return sbGet('bookings', 'order=booked_at.desc&limit=200')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (Array.isArray(data)) {
+        ALL_BOOKINGS = data;
+        renderAppts();
+        renderSchedule();
+        updateDashKPIs();
+      } else {
+        console.warn('Bookings: unexpected response', data);
+      }
+    })
+    .catch(function(e) {
+      if (String(e).indexOf('FILE_PROTOCOL') === -1) {
+        console.warn('Bookings load failed:', e.message || e);
+      }
+    });
+}
+
+function loadClients() {
+  return sbGet('clients', 'order=created_at.desc&limit=500')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (Array.isArray(data)) {
+        ALL_CLIENTS = data;
+        renderClientsTable();
+      }
+    })
+    .catch(function(e) {
+      if (String(e).indexOf('FILE_PROTOCOL') === -1) {
+        console.warn('Clients load failed:', e.message || e);
+      }
+    });
+}
+
+function loadPayments() {
+  return sbGet('payments', 'order=paid_at.desc&limit=500')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (Array.isArray(data)) {
+        ALL_PAYMENTS = data;
+        updateRevenueKPIs();
+      }
+    })
+    .catch(function(e) {
+      if (String(e).indexOf('FILE_PROTOCOL') === -1) {
+        console.warn('Payments load failed:', e.message || e);
+      }
+    });
+}
+
+function updateDashKPIs() {
+  var today = new Date().toISOString().split('T')[0];
+  var todayBk = ALL_BOOKINGS.filter(function(b) {
+    return b.booked_at && b.booked_at.startsWith(today);
+  });
+  var monthPfx = new Date().toISOString().slice(0, 7);
+  var monthBk = ALL_BOOKINGS.filter(function(b) {
+    return b.booked_at && b.booked_at.startsWith(monthPfx);
+  });
+  var pending = ALL_BOOKINGS.filter(function(b) { return b.status === 'pending'; });
+
+  var todayEl = document.querySelector('.kcard-val');
+  // Update first KPI card (today appointments)
+  var kards = document.querySelectorAll('.kcard-val');
+  if (kards[0]) kards[0].textContent = todayBk.length;
+  if (kards[3]) kards[3].textContent = ALL_CLIENTS.length;
+  if (kards[4]) kards[4].textContent = pending.length;
+
+  var nb = document.getElementById('nb-p');
+  if (nb) { nb.textContent = pending.length; nb.style.display = pending.length ? '' : 'none'; }
+}
+
+function updateRevenueKPIs() {
+  var monthPfx = new Date().toISOString().slice(0, 7);
+  var monthPay = ALL_PAYMENTS.filter(function(p) {
+    return p.paid_at && p.paid_at.startsWith(monthPfx);
+  });
+  var total = monthPay.reduce(function(s, p) { return s + parseFloat(p.amount || 0); }, 0);
+  // Revenue page KPIs update happens when page is visited
+}
+
+/* ── CREATE APPOINTMENT (real) ── */
+function createAppt() {
+  var clientEl = document.getElementById('appt-client');
+  var svcEl = document.getElementById('appt-svc');
+  var staffEl = document.getElementById('appt-staff');
+  var dtEl = document.getElementById('appt-dt');
+
+  var clientName = clientEl ? clientEl.value.replace(' ★ VIP','') : 'Client';
+  var svcVal = svcEl ? svcEl.value : 'Service';
+  var svcName = svcVal.split(' — ')[0];
+  var svcPrice = parseFloat((svcVal.match(/CA\$(\d+)/) || [0,0])[1]) || 0;
+  var staffName = staffEl ? staffEl.value.replace(' (Available ✓)','').replace(' (After 12pm)','') : 'Staff';
+  var dt = dtEl ? dtEl.value : new Date().toISOString();
+
+  if (!dt) { toast('Please select a date and time', 'err'); return; }
+
+  var booking = {
+    client_name: clientName,
+    staff_name: staffName,
+    service_name: svcName,
+    service_price: svcPrice,
+    status: 'confirmed',
+    payment_status: 'unpaid',
+    booked_at: new Date(dt).toISOString(),
+    notes: ''
+  };
+
+  sbInsert('bookings', booking)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      toast('Appointment created for ' + clientName + '!', 'ok');
+      loadBookings();
+    })
+    .catch(function(e) {
+      toast('Error saving appointment', 'err');
+      console.error(e);
+    });
+}
+
+/* ── CONFIRM / COMPLETE / CANCEL (real) ── */
+function updateApptStatus(id, status) {
+  sbUpdate('bookings', id, {status: status})
+    .then(function() {
+      toast(status === 'confirmed' ? 'Confirmed!' : status === 'completed' ? 'Marked complete!' : 'Cancelled', status === 'cancelled' ? 'err' : 'ok');
+      loadBookings();
+      // If completed, open payment modal
+      if (status === 'completed') openPaymentModal(id);
+    })
+    .catch(function(e) { toast('Update failed', 'err'); });
+}
+
+/* ── PAYMENT MODAL ── */
+function openPaymentModal(bookingId) {
+  var bk = ALL_BOOKINGS.find(function(b) { return b.id === bookingId; });
+  if (!bk) return;
+
+  var existing = document.getElementById('payment-modal');
+  if (existing) existing.remove();
+
+  // Build modal with DOM - no string concatenation for onclick
+  var overlay = document.createElement('div');
+  overlay.id = 'payment-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:1.75rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.15)';
+
+  // Header
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem';
+  var title = document.createElement('div');
+  title.style.cssText = 'font-family:Syne,sans-serif;font-size:1rem;font-weight:700';
+  title.textContent = 'Record Payment';
+  var closeBtn = document.createElement('span');
+  closeBtn.textContent = '×';
+  closeBtn.style.cssText = 'cursor:pointer;font-size:1.5rem;color:#9CA3AF;line-height:1';
+  closeBtn.onclick = function() { overlay.remove(); };
+  header.appendChild(title);
+  header.appendChild(closeBtn);
+
+  // Client info
+  var info = document.createElement('div');
+  info.style.cssText = 'background:#F7F8FA;border-radius:10px;padding:.75rem;margin-bottom:1rem;font-size:.82rem';
+  info.innerHTML = '<div style="font-weight:600">' + (bk.client_name || '') + '</div>' +
+    '<div style="color:#6B7280">' + (bk.service_name || '') + ' &middot; ' + (bk.staff_name || '') + '</div>';
+
+  // Amount
+  var amtWrap = document.createElement('div');
+  amtWrap.style.marginBottom = '.75rem';
+  var amtLbl = document.createElement('label');
+  amtLbl.style.cssText = 'font-size:.68rem;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.3rem';
+  amtLbl.textContent = 'Amount';
+  var amtInp = document.createElement('input');
+  amtInp.id = 'pay-amount';
+  amtInp.type = 'number';
+  amtInp.value = bk.service_price || 0;
+  amtInp.style.cssText = 'width:100%;padding:.65rem .9rem;border:1.5px solid #E2E4EC;border-radius:8px;font-size:.9rem;outline:none;font-family:Inter,sans-serif';
+  amtInp.onfocus = function() { this.style.borderColor = '#E91E8C'; };
+  amtInp.onblur  = function() { this.style.borderColor = '#E2E4EC'; };
+  amtWrap.appendChild(amtLbl);
+  amtWrap.appendChild(amtInp);
+
+  // Method label
+  var methodLbl = document.createElement('label');
+  methodLbl.style.cssText = 'font-size:.68rem;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem';
+  methodLbl.textContent = 'Payment Method';
+
+  // Method buttons grid
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem';
+  var methods = [
+    {key:'cash',        label:'Cash',        icon:'fa-money-bill-wave', color:'#059669'},
+    {key:'credit_card', label:'Credit Card', icon:'fa-credit-card',     color:'#2563EB'},
+    {key:'debit',       label:'Debit',       icon:'fa-credit-card',     color:'#7C3AED'},
+    {key:'online',      label:'Online',      icon:'fa-mobile-alt',      color:'#D97706'}
+  ];
+  methods.forEach(function(m) {
+    var btn = document.createElement('button');
+    btn.style.cssText = 'padding:.6rem;border:1.5px solid #E2E4EC;border-radius:8px;font-size:.8rem;cursor:pointer;background:#fff;transition:.15s;font-family:Inter,sans-serif';
+    btn.innerHTML = '<i class="fa-solid ' + m.icon + '" style="color:' + m.color + '"></i> ' + m.label;
+    btn.dataset.method = m.key;
+    btn.onclick = function() {
+      selectedMethod = m.key;
+      grid.querySelectorAll('button').forEach(function(b) {
+        b.style.borderColor = '#E2E4EC';
+        b.style.background = '#fff';
+      });
+      btn.style.borderColor = '#E91E8C';
+      btn.style.background = '#FDF2F8';
+    };
+    grid.appendChild(btn);
+  });
+
+  // Commission info
+  var price = parseFloat(bk.service_price) || 0;
+  var commInfo = document.createElement('div');
+  commInfo.style.cssText = 'background:#F0FDF4;border:1px solid #6EE7B7;border-radius:8px;padding:.75rem;margin-bottom:1rem;font-size:.8rem';
+  commInfo.innerHTML = 'Commission (25%): <strong style="color:#E91E8C">CA$' + (price * 0.25).toFixed(2) + '</strong>' +
+    ' &nbsp;&middot;&nbsp; Net Revenue: <strong style="color:#059669">CA$' + (price * 0.75).toFixed(2) + '</strong>';
+
+  // Save button
+  var saveBtn = document.createElement('button');
+  saveBtn.style.cssText = 'width:100%;padding:.8rem;background:#E91E8C;color:#fff;border:none;border-radius:50px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:Inter,sans-serif';
+  saveBtn.textContent = 'Save Payment';
+  saveBtn.onclick = function() { savePayment(bookingId); };
+
+  // Assemble
+  box.appendChild(header);
+  box.appendChild(info);
+  box.appendChild(amtWrap);
+  box.appendChild(methodLbl);
+  box.appendChild(grid);
+  box.appendChild(commInfo);
+  box.appendChild(saveBtn);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // Close on backdrop click
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
+
+var selectedMethod = 'cash';
+function selectMethod(btn, method) {
+  selectedMethod = method;
+  document.querySelectorAll('.pay-method-btn').forEach(function(b) {
+    b.style.borderColor = '#E2E4EC';
+    b.style.background = '#fff';
+  });
+  btn.style.borderColor = '#E91E8C';
+  btn.style.background = '#FDF2F8';
+}
+
+function savePayment(bookingId) {
+  var bk = ALL_BOOKINGS.find(function(b) { return b.id === bookingId; });
+  if (!bk) return;
+  var amount = parseFloat(document.getElementById('pay-amount').value) || bk.service_price;
+
+  var payment = {
+    booking_id: bookingId,
+    client_name: bk.client_name,
+    staff_name: bk.staff_name,
+    service_name: bk.service_name,
+    amount: amount,
+    method: selectedMethod
+  };
+
+  sbInsert('payments', payment)
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      sbUpdate('bookings', bookingId, {payment_method: selectedMethod, payment_status: 'paid'});
+      document.getElementById('payment-modal').remove();
+      toast('Payment saved! CA$' + amount + ' via ' + selectedMethod, 'ok');
+      loadPayments();
+      loadBookings();
+    })
+    .catch(function(e) { toast('Payment save failed', 'err'); });
+}
+
+/* ── RENDER APPOINTMENTS (real data) ── */
 function boot() {
   clock();
   setInterval(clock, 60000);
   setTimeout(initCharts, 100);
-  renderAppts();
   renderSchedule();
+  // Test connection first, then load data
+  testConnection();
+  if (window.location.protocol !== 'file:') {
+    loadBookings();
+    loadClients();
+    loadPayments();
+  }
 }
 
 window.addEventListener('DOMContentLoaded', function() {
